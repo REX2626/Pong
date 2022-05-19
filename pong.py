@@ -5,6 +5,9 @@ from objects import Ball, Padel
 WIDTH, HEIGHT = 900, 500
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("GamingX Pong")
+ICON = pygame.image.load(
+    os.path.join('Assets', 'pong_icon.png'))
+pygame.display.set_icon(ICON)
 
 FPS = 500
 SPEED = 250 / FPS
