@@ -1,6 +1,8 @@
 import pygame
 import os
 from objects import Ball, Padel
+from menu import Menu
+pygame.font.init()
 
 WIDTH, HEIGHT = 900, 500
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -13,6 +15,10 @@ FPS = 500
 SPEED = 250 / FPS
 speed = SPEED
 last_collided = None
+
+WHITE = (255, 255, 255)
+LIGHT_GREY = (60, 60, 60)
+DARK_GREY = (30, 30, 30)
 
 PADEL_WIDTH, PADEL_HEIGHT = 13, 55
 RED_PADEL_X = 100 - PADEL_WIDTH // 2
@@ -114,5 +120,22 @@ def main():
         draw_window(yellow, red, ball)
 
 
+def main_menu():
+    menu = Menu(HEIGHT, WIDTH, text_colour=WHITE)
+    menu.draw_menu(WIN, background_colour=DARK_GREY, box_colour=LIGHT_GREY)
+    run = True
+    while run:
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+                pygame.quit()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse = pygame.mouse.get_pos()
+                if menu.clicked_on_start(mouse):
+                    main()
+
+
 if __name__ == "__main__":
-    main()
+    main_menu()
