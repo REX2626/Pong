@@ -11,6 +11,7 @@ SPEED = 250 / FPS
 speed = SPEED
 last_collided = None
 "test"
+"hello world"
 
 BLACK = (0, 0, 0)
 PADEL_WIDTH, PADEL_HEIGHT = 13, 55
