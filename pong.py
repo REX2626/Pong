@@ -11,7 +11,7 @@ ICON = pygame.image.load(
     os.path.join('Assets', 'pong_icon.png'))
 pygame.display.set_icon(ICON)
 
-FPS = 500
+FPS = 150
 SPEED = 250 / FPS
 speed = SPEED
 last_collided = None
