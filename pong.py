@@ -76,15 +76,15 @@ def handle_ball_movement(ball: Ball, yellow: pygame.Rect, red: pygame.Rect):
 
     if ball.collide_padel(red):
         ball.collision_red(red)
-        if last_collided == yellow:
-            speed *= 1.1
+        if last_collided != red:
+            speed *= 1.05
             ball.increase_speed()
             last_collided = red
 
     elif ball.collide_padel(yellow):
         ball.collision_yellow(yellow)
-        if last_collided == red:
-            speed *= 1.1
+        if last_collided != yellow:
+            speed *= 1.05
             ball.increase_speed()
             last_collided = yellow
 
