@@ -11,7 +11,6 @@ SPEED = 250 / FPS
 speed = SPEED
 last_collided = None
 
-BLACK = (0, 0, 0)
 PADEL_WIDTH, PADEL_HEIGHT = 13, 55
 RED_PADEL_X = 100 - PADEL_WIDTH // 2
 YELLOW_PADEL_X = 800 - PADEL_WIDTH // 2
@@ -33,9 +32,14 @@ BALL_IMAGE = pygame.image.load(
 BALL = pygame.transform.scale(
     BALL_IMAGE, (BALL_WIDTH, BALL_HEIGHT))
 
+BACKGROUND_IMAGE = pygame.image.load(
+    os.path.join('Assets', 'background.png'))
+BACKGROUND = pygame.transform.scale(
+    BACKGROUND_IMAGE, (WIDTH, HEIGHT))
+
 
 def draw_window(yellow: pygame.Rect, red: pygame.Rect, ball: Ball):
-    WIN.fill(BLACK)
+    WIN.blit(BACKGROUND, (0, 0))
     WIN.blit(YELLOW_PADEL, (yellow.x, yellow.y))
     WIN.blit(RED_PADEL, (red.x, red.y))
     WIN.blit(BALL, (ball.x, ball.y))
