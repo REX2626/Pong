@@ -72,9 +72,10 @@ class Ball():
         return False
 
     def scored(self, width):
-        if self.x < 1 or self.x + self.width > width:
-            return True
-        return False
+        if self.x < 1:
+            return "Yellow"
+        elif self.x + self.width > width:
+            return "Red"
 
     def restart(self, width, height):
         self.x = width // 2

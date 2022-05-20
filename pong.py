@@ -47,11 +47,16 @@ BACKGROUND = pygame.transform.scale(
     BACKGROUND_IMAGE, (WIDTH, HEIGHT))
 
 
-def draw_window(yellow: pygame.Rect, red: pygame.Rect, ball: Ball):
+def draw_window(yellow: pygame.Rect, red: pygame.Rect, ball: Ball, red_score, yellow_score):
     WIN.blit(BACKGROUND, (0, 0))
     WIN.blit(YELLOW_PADEL, (yellow.x, yellow.y))
     WIN.blit(RED_PADEL, (red.x, red.y))
     WIN.blit(BALL, (ball.x, ball.y))
+    score_font = pygame.font.SysFont("comicsans", 20)
+    red_score_label = score_font.render(f"RED: {red_score}", True, WHITE)
+    yellow_score_label = score_font.render(f"YELLOW: {yellow_score}", True, WHITE)
+    WIN.blit(red_score_label, (10, 0))
+    WIN.blit(yellow_score_label, (WIDTH - yellow_score_label.get_width() - 10, 0))
     pygame.display.update()
 
 
@@ -90,14 +95,20 @@ def handle_ball_movement(ball: Ball, yellow: pygame.Rect, red: pygame.Rect):
 
     ball.boundary_collision(HEIGHT)
 
+    scored = ball.scored(WIDTH)
     if ball.scored(WIDTH):
         ball.restart(WIDTH, HEIGHT)
         variable_speed = SPEED
+        return scored
 
 
 def main():
     global speed
     delta_time = 0
+
+    red_score = 0
+    yellow_score = 0
+
     red = Padel(RED_PADEL_X, PADEL_Y, PADEL_WIDTH, PADEL_HEIGHT)
     yellow = Padel(YELLOW_PADEL_X, PADEL_Y, PADEL_WIDTH, PADEL_HEIGHT)
 
@@ -117,9 +128,13 @@ def main():
         red_handle_movement(keys_pressed, red)
         yellow_handle_movement(keys_pressed, yellow)
 
-        handle_ball_movement(ball, yellow, red)
+        scored = handle_ball_movement(ball, yellow, red)
+        if scored == "Red":
+            red_score += 1
+        elif scored == "Yellow":
+            yellow_score += 1
 
-        draw_window(yellow, red, ball)
+        draw_window(yellow, red, ball, red_score, yellow_score)
         time2 = perf_counter()
         delta_time = time2 - time1
 
