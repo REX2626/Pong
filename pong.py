@@ -47,16 +47,21 @@ BACKGROUND = pygame.transform.scale(
     BACKGROUND_IMAGE, (WIDTH, HEIGHT))
 
 
-def draw_window(yellow: pygame.Rect, red: pygame.Rect, ball: Ball, red_score, yellow_score):
+def draw_window(yellow: pygame.Rect, red: pygame.Rect, ball: Ball, red_score, yellow_score, rally):
     WIN.blit(BACKGROUND, (0, 0))
     WIN.blit(YELLOW_PADEL, (yellow.x, yellow.y))
     WIN.blit(RED_PADEL, (red.x, red.y))
     WIN.blit(BALL, (ball.x, ball.y))
+
     score_font = pygame.font.SysFont("comicsans", 20)
     red_score_label = score_font.render(f"RED: {red_score}", True, WHITE)
     yellow_score_label = score_font.render(f"YELLOW: {yellow_score}", True, WHITE)
+    rally_score_label = score_font.render(f"RALLY: {rally}", True, WHITE)
+
     WIN.blit(red_score_label, (10, 0))
     WIN.blit(yellow_score_label, (WIDTH - yellow_score_label.get_width() - 10, 0))
+    WIN.blit(rally_score_label, (WIDTH / 2 - yellow_score_label.get_width() / 2, 0))
+
     pygame.display.update()
 
 
@@ -77,6 +82,7 @@ def yellow_handle_movement(keys_pressed, yellow: pygame.Rect):
 def handle_ball_movement(ball: Ball, yellow: pygame.Rect, red: pygame.Rect):
     global variable_speed
     global last_collided
+    event = None
     ball.move()
 
     if ball.collide_padel(red):
@@ -85,6 +91,7 @@ def handle_ball_movement(ball: Ball, yellow: pygame.Rect, red: pygame.Rect):
             variable_speed *= 1.05
             ball.increase_speed()
             last_collided = red
+            event = "Rally"
 
     elif ball.collide_padel(yellow):
         ball.collision_yellow(yellow)
@@ -92,6 +99,7 @@ def handle_ball_movement(ball: Ball, yellow: pygame.Rect, red: pygame.Rect):
             variable_speed *= 1.05
             ball.increase_speed()
             last_collided = yellow
+            event = "Rally"
 
     ball.boundary_collision(HEIGHT)
 
@@ -99,7 +107,10 @@ def handle_ball_movement(ball: Ball, yellow: pygame.Rect, red: pygame.Rect):
     if ball.scored(WIDTH):
         ball.restart(WIDTH, HEIGHT)
         variable_speed = SPEED
-        return scored
+        event = scored
+        last_collided = None
+    
+    return event
 
 
 def main():
@@ -108,6 +119,7 @@ def main():
 
     red_score = 0
     yellow_score = 0
+    rally = 0
 
     red = Padel(RED_PADEL_X, PADEL_Y, PADEL_WIDTH, PADEL_HEIGHT)
     yellow = Padel(YELLOW_PADEL_X, PADEL_Y, PADEL_WIDTH, PADEL_HEIGHT)
@@ -128,13 +140,17 @@ def main():
         red_handle_movement(keys_pressed, red)
         yellow_handle_movement(keys_pressed, yellow)
 
-        scored = handle_ball_movement(ball, yellow, red)
-        if scored == "Red":
+        event = handle_ball_movement(ball, yellow, red)
+        if event == "Red":
             red_score += 1
-        elif scored == "Yellow":
+            rally = 0
+        elif event == "Yellow":
             yellow_score += 1
+            rally = 0
+        elif event == "Rally":
+            rally += 1
 
-        draw_window(yellow, red, ball, red_score, yellow_score)
+        draw_window(yellow, red, ball, red_score, yellow_score, rally)
         time2 = perf_counter()
         delta_time = time2 - time1
 
