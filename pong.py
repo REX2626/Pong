@@ -31,17 +31,17 @@ PADEL_Y = 250 - PADEL_HEIGHT // 2
 YELLOW_PADEL_IMAGE = pygame.image.load(
     os.path.join('Assets', 'padel_yellow.png'))
 YELLOW_PADEL = pygame.transform.scale(
-    YELLOW_PADEL_IMAGE, (PADEL_WIDTH, PADEL_HEIGHT))
+    YELLOW_PADEL_IMAGE, (PADEL_WIDTH, PADEL_HEIGHT)).convert()
 
 RED_PADEL_IMAGE = pygame.image.load(
     os.path.join('Assets', 'padel_red.png'))
 RED_PADEL = pygame.transform.scale(
-    RED_PADEL_IMAGE, (PADEL_WIDTH, PADEL_HEIGHT))
+    RED_PADEL_IMAGE, (PADEL_WIDTH, PADEL_HEIGHT)).convert()
 
 BACKGROUND_IMAGE = pygame.image.load(
     os.path.join('Assets', 'background.png'))
 BACKGROUND = pygame.transform.scale(
-    BACKGROUND_IMAGE, (WIDTH, HEIGHT))
+    BACKGROUND_IMAGE, (WIDTH, HEIGHT)).convert()
 
 BALL_WIDTH, BALL_HEIGHT = 8, 8
 BALL_IMAGES = {}
@@ -49,7 +49,7 @@ for file in os.listdir(os.fsencode(os.path.join("Assets", "Balls"))):
     BALL_IMAGE = pygame.image.load(
         os.path.join('Assets', 'Balls', os.fsdecode(file)))
     BALL = pygame.transform.scale(
-        BALL_IMAGE, (BALL_WIDTH, BALL_HEIGHT))
+        BALL_IMAGE, (BALL_WIDTH, BALL_HEIGHT)).convert()
     BALL_IMAGES[os.fsdecode(file)] = BALL
 
 def get_ball(rally):
