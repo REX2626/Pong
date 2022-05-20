@@ -21,9 +21,6 @@ class Ball():
         self.vx, self.vy = vx**0.5, vy**0.5
         self.vx *= random.randint(0, 1) * 2 - 1
 
-    def rect(self):
-        return pygame.Rect(self.x, self.y, self.width, self.height)
-
     def move(self, speed):
         self.x += self.vx * speed
         self.y += self.vy * speed
