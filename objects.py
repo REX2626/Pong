@@ -38,14 +38,21 @@ class Ball():
             elif self.spiny < 0:
                 self.spiny += min(-self.spiny, speed / screen_width)
 
+    def move_out_collision(self, multiplier):
+        self.x += self.vx * multiplier
+        self.y += self.vy * multiplier
+
     def collision_red(self, padel: Padel, spin):
         x, y = self.x, self.y
         if padel.x + padel.width - x > padel.y + padel.height - y: # Top left ball to bottom right padel
+            self.move_out_collision((padel.y + padel.height - y) / self.vy)
             self.vy = abs(self.vy)
         elif padel.x + padel.width - x > y + self.height - padel.y: # Bottom left ball to top right padel
+            self.move_out_collision((y + self.height - padel.y) / self.vy)
             self.vy = -abs(self.vy)
         else:
             dist_to_centre = (y + self.height / 2) - (padel.y + padel.height / 2) # Distance from center of ball to centre of padel
+            self.move_out_collision((padel.x + padel.width - x) / self.vx)
             self.vy = dist_to_centre / padel.height
             self.vx = (1 - self.vy**2)**0.5
             if spin:
@@ -59,11 +66,14 @@ class Ball():
     def collision_yellow(self, padel: Padel, spin):
         x, y = self.x, self.y
         if x + self.width - padel.x > padel.y + padel.height - y: # Top right ball to bottom left padel
+            self.move_out_collision((padel.y + padel.height - y) / self.vy)
             self.vy = abs(self.vy)
         elif x + self.width - padel.x > y + self.height - padel.y: # Bottom right ball to top left padel
+            self.move_out_collision((y + self.height - padel.y) / self.vy)
             self.vy = -abs(self.vy)
         else:
             dist_to_centre = (y + self.height / 2) - (padel.y + padel.height / 2) # Distance from center of ball to centre of padel
+            self.move_out_collision((x - padel.x) / self.vx)
             self.vy = dist_to_centre / padel.height
             self.vx = -(1 - self.vy**2)**0.5
             if spin:
