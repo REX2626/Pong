@@ -46,8 +46,8 @@ class Ball():
             self.vx = -abs(self.vx)
 
     def increase_speed(self):
-        self.vx *= 1.05
-        self.vy *= 1.05
+        self.vx += 0.05
+        self.vy += 0.05
 
     def boundary_collision(self, height):
         if self.y < 0 or self.y + self.height > height:

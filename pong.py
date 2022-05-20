@@ -12,7 +12,7 @@ ICON = pygame.image.load(
     os.path.join('Assets', 'pong_icon.png'))
 pygame.display.set_icon(ICON)
 
-SPEED = 225
+SPEED = 230
 variable_speed = SPEED
 last_collided = None
 
@@ -80,7 +80,7 @@ def draw_window(yellow: pygame.Rect, red: pygame.Rect, ball: Ball, red_score, ye
 
     WIN.blit(red_score_label, (10, 0))
     WIN.blit(yellow_score_label, (WIDTH - yellow_score_label.get_width() - 10, 0))
-    WIN.blit(rally_score_label, (WIDTH / 2 - yellow_score_label.get_width() / 2.5, 0))
+    WIN.blit(rally_score_label, (WIDTH / 2 - rally_score_label.get_width() / 2, 0))
 
     pygame.display.update()
 
@@ -108,7 +108,7 @@ def handle_ball_movement(ball: Ball, yellow: pygame.Rect, red: pygame.Rect):
     if ball.collide_padel(red):
         ball.collision_red(red)
         if last_collided != red:
-            variable_speed *= 1.05
+            variable_speed += 0.05
             ball.increase_speed()
             last_collided = red
             event = "Rally"
@@ -116,7 +116,7 @@ def handle_ball_movement(ball: Ball, yellow: pygame.Rect, red: pygame.Rect):
     elif ball.collide_padel(yellow):
         ball.collision_yellow(yellow)
         if last_collided != yellow:
-            variable_speed *= 1.05
+            variable_speed += 0.05
             ball.increase_speed()
             last_collided = yellow
             event = "Rally"
