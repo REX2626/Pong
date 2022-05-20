@@ -110,7 +110,6 @@ def handle_ball_movement(ball: Ball, yellow: pygame.Rect, red: pygame.Rect):
         ball.collision_red(red)
         if last_collided != red:
             variable_speed *= 1.03
-            ball.increase_speed()
             last_collided = red
             event = "Rally"
 
@@ -118,7 +117,6 @@ def handle_ball_movement(ball: Ball, yellow: pygame.Rect, red: pygame.Rect):
         ball.collision_yellow(yellow)
         if last_collided != yellow:
             variable_speed *= 1.03
-            ball.increase_speed()
             last_collided = yellow
             event = "Rally"
 

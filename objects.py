@@ -1,4 +1,3 @@
-import pygame
 import random
 
 class Padel():
@@ -33,7 +32,9 @@ class Ball():
         elif padel.x + padel.width - x > y - padel.y: # Bottom left ball to top right padel
             self.vy = -abs(self.vy)
         else:
-            self.vx = abs(self.vx)
+            dist_to_centre = (y + self.height / 2) - (padel.y + padel.height / 2) # Distance from center of ball to centre of padel
+            self.vy = dist_to_centre / padel.height
+            self.vx = (1 - self.vy**2)**0.5
 
     def collision_yellow(self, padel: Padel):
         x, y = self.x + self.width, self.y
@@ -43,12 +44,9 @@ class Ball():
         elif padel.x - x > y - padel.y: # Bottom right ball to top left padel
             self.vy = -abs(self.vy)
         else:
-            self.vx = -abs(self.vx)
-
-    def increase_speed(self):
-        self.vx *= 1.03
-        self.vy *= 1.03
-        print(self.vx, self.vy)
+            dist_to_centre = (y + self.height / 2) - (padel.y + padel.height / 2) # Distance from center of ball to centre of padel
+            self.vy = dist_to_centre / padel.height
+            self.vx = -(1 - self.vy**2)**0.5
 
     def boundary_collision(self, height):
         if self.y < 30 or self.y + self.height > height - 2:
