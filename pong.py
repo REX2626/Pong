@@ -12,7 +12,7 @@ ICON = pygame.image.load(
     os.path.join('Assets', 'pong_icon.png'))
 pygame.display.set_icon(ICON)
 
-SPEED = 250
+SPEED = 225
 variable_speed = SPEED
 last_collided = None
 
@@ -37,16 +37,33 @@ RED_PADEL_IMAGE = pygame.image.load(
 RED_PADEL = pygame.transform.scale(
     RED_PADEL_IMAGE, (PADEL_WIDTH, PADEL_HEIGHT))
 
-BALL_WIDTH, BALL_HEIGHT = 8, 8
-BALL_IMAGE = pygame.image.load(
-    os.path.join('Assets', 'ball.png'))
-BALL = pygame.transform.scale(
-    BALL_IMAGE, (BALL_WIDTH, BALL_HEIGHT))
-
 BACKGROUND_IMAGE = pygame.image.load(
     os.path.join('Assets', 'background.png'))
 BACKGROUND = pygame.transform.scale(
     BACKGROUND_IMAGE, (WIDTH, HEIGHT))
+
+BALL_WIDTH, BALL_HEIGHT = 8, 8
+BALL_IMAGES = {}
+for file in os.listdir(os.fsencode(os.path.join("Assets", "Balls"))):
+    BALL_IMAGE = pygame.image.load(
+        os.path.join('Assets', 'Balls', os.fsdecode(file)))
+    BALL = pygame.transform.scale(
+        BALL_IMAGE, (BALL_WIDTH, BALL_HEIGHT))
+    BALL_IMAGES[os.fsdecode(file)] = BALL
+
+def get_ball(rally):
+    if rally < 5:
+        return BALL_IMAGES["ball.png"]
+    elif rally < 10:
+        return BALL_IMAGES["ball_200.png"]
+    elif rally < 15:
+        return BALL_IMAGES["ball_150.png"]
+    elif rally < 20:
+        return BALL_IMAGES["ball_100.png"]
+    elif rally < 25:
+        return BALL_IMAGES["ball_50.png"]
+    else:
+        return BALL_IMAGES["ball_0.png"]
 
 
 def draw_window(yellow: pygame.Rect, red: pygame.Rect, ball: Ball, red_score, yellow_score, rally):
@@ -54,7 +71,7 @@ def draw_window(yellow: pygame.Rect, red: pygame.Rect, ball: Ball, red_score, ye
     WIN.blit(BACKGROUND, (0, 15))
     WIN.blit(YELLOW_PADEL, (yellow.x, yellow.y))
     WIN.blit(RED_PADEL, (red.x, red.y))
-    WIN.blit(BALL, (ball.x, ball.y))
+    WIN.blit(get_ball(rally), (ball.x, ball.y))
 
     score_font = pygame.font.SysFont("comicsans", 20)
     red_score_label = score_font.render(f"RED: {red_score}", True, WHITE)
@@ -86,7 +103,7 @@ def handle_ball_movement(ball: Ball, yellow: pygame.Rect, red: pygame.Rect):
     global variable_speed
     global last_collided
     event = None
-    ball.move()
+    ball.move(speed)
 
     if ball.collide_padel(red):
         ball.collision_red(red)

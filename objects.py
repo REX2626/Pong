@@ -24,9 +24,9 @@ class Ball():
     def rect(self):
         return pygame.Rect(self.x, self.y, self.width, self.height)
 
-    def move(self):
-        self.x += self.vx
-        self.y += self.vy
+    def move(self, speed):
+        self.x += self.vx * speed
+        self.y += self.vy * speed
 
     def collision_red(self, padel: Padel):
         x, y = self.x, self.y
