@@ -17,8 +17,10 @@ variable_speed = SPEED
 last_collided = None
 
 WHITE = (255, 255, 255)
-LIGHT_GREY = (60, 60, 60)
+LIGHT_GREY = (100, 100, 100)
+MEDIUM_GREY = (60, 60, 60)
 DARK_GREY = (30, 30, 30)
+BLACK = (0, 0, 0)
 
 PADEL_WIDTH, PADEL_HEIGHT = 13, 55
 RED_PADEL_X = 100 - PADEL_WIDTH // 2
@@ -48,7 +50,8 @@ BACKGROUND = pygame.transform.scale(
 
 
 def draw_window(yellow: pygame.Rect, red: pygame.Rect, ball: Ball, red_score, yellow_score, rally):
-    WIN.blit(BACKGROUND, (0, 0))
+    WIN.fill(BLACK)
+    WIN.blit(BACKGROUND, (0, 15))
     WIN.blit(YELLOW_PADEL, (yellow.x, yellow.y))
     WIN.blit(RED_PADEL, (red.x, red.y))
     WIN.blit(BALL, (ball.x, ball.y))
@@ -56,11 +59,11 @@ def draw_window(yellow: pygame.Rect, red: pygame.Rect, ball: Ball, red_score, ye
     score_font = pygame.font.SysFont("comicsans", 20)
     red_score_label = score_font.render(f"RED: {red_score}", True, WHITE)
     yellow_score_label = score_font.render(f"YELLOW: {yellow_score}", True, WHITE)
-    rally_score_label = score_font.render(f"RALLY: {rally}", True, WHITE)
+    rally_score_label = score_font.render(f"RALLY: {rally}", True, LIGHT_GREY)
 
     WIN.blit(red_score_label, (10, 0))
     WIN.blit(yellow_score_label, (WIDTH - yellow_score_label.get_width() - 10, 0))
-    WIN.blit(rally_score_label, (WIDTH / 2 - yellow_score_label.get_width() / 2, 0))
+    WIN.blit(rally_score_label, (WIDTH / 2 - yellow_score_label.get_width() / 2.5, 0))
 
     pygame.display.update()
 
@@ -157,7 +160,7 @@ def main():
 
 def main_menu():
     menu = Menu(HEIGHT, WIDTH, text_colour=WHITE)
-    menu.draw_menu(WIN, background_colour=DARK_GREY, box_colour=LIGHT_GREY)
+    menu.draw_menu(WIN, background_colour=DARK_GREY, box_colour=MEDIUM_GREY)
     run = True
     while run:
 
