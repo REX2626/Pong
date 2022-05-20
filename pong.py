@@ -146,33 +146,51 @@ def main():
 
     ball = Ball(WIDTH, HEIGHT, BALL_WIDTH, BALL_HEIGHT)
 
-    run = True
-    while run:
-        time1 = perf_counter()
-        speed = variable_speed * delta_time
+    running = True
+    not_paused = True
+    while running:
+        while not_paused:
+            time1 = perf_counter()
+            speed = variable_speed * delta_time
 
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    not_paused = False
+                    running = False
+                    pygame.quit()
+
+                elif event.type == pygame.KEYDOWN and event.__dict__["key"] == pygame.K_ESCAPE:
+                    not_paused = False
+
+            keys_pressed = pygame.key.get_pressed()
+            red_handle_movement(keys_pressed, red)
+            yellow_handle_movement(keys_pressed, yellow)
+
+            event = handle_ball_movement(ball, yellow, red)
+            if event == "Red":
+                red_score += 1
+                rally = 0
+            elif event == "Yellow":
+                yellow_score += 1
+                rally = 0
+            elif event == "Rally":
+                rally += 1
+
+            draw_window(yellow, red, ball, red_score, yellow_score, rally)
+            time2 = perf_counter()
+            delta_time = time2 - time1
+        
+        if not running:
+            break
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                run = False
+                not_paused = False
+                running = False
                 pygame.quit()
-                
-        keys_pressed = pygame.key.get_pressed()
-        red_handle_movement(keys_pressed, red)
-        yellow_handle_movement(keys_pressed, yellow)
 
-        event = handle_ball_movement(ball, yellow, red)
-        if event == "Red":
-            red_score += 1
-            rally = 0
-        elif event == "Yellow":
-            yellow_score += 1
-            rally = 0
-        elif event == "Rally":
-            rally += 1
-
-        draw_window(yellow, red, ball, red_score, yellow_score, rally)
-        time2 = perf_counter()
-        delta_time = time2 - time1
+            elif event.type == pygame.KEYDOWN and event.__dict__["key"] == pygame.K_ESCAPE:
+                not_paused = True
 
 
 def main_menu():
