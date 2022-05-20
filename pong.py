@@ -24,8 +24,8 @@ DARK_GREY = (30, 30, 30)
 BLACK = (0, 0, 0)
 
 PADEL_WIDTH, PADEL_HEIGHT = 13, 55
-RED_PADEL_X = 100 - PADEL_WIDTH // 2
-YELLOW_PADEL_X = 800 - PADEL_WIDTH // 2
+RED_PADEL_X = 80
+YELLOW_PADEL_X = 820 - PADEL_WIDTH
 PADEL_Y = 250 - PADEL_HEIGHT // 2
 
 YELLOW_PADEL_IMAGE = pygame.image.load(
@@ -114,17 +114,17 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel):
     global variable_speed
     global last_collided
     event = None
-    ball.move(speed, WIDTH - 200)
+    ball.move(speed, WIDTH // 2)
 
     if ball.collide_padel(red):
-        ball.collision_red(red)
+        ball.collision_red(red, spin=last_collided != red)
         if last_collided != red:
             variable_speed *= 1.03
             last_collided = red
             event = "Rally"
 
     elif ball.collide_padel(yellow):
-        ball.collision_yellow(yellow)
+        ball.collision_yellow(yellow, spin=last_collided != yellow)
         if last_collided != yellow:
             variable_speed *= 1.03
             last_collided = yellow
