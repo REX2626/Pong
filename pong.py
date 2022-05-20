@@ -86,25 +86,35 @@ def draw_window(yellow: pygame.Rect, red: pygame.Rect, ball: Ball, red_score, ye
     pygame.display.update()
 
 
-def red_handle_movement(keys_pressed, red: pygame.Rect):
+def red_handle_movement(keys_pressed, red: Padel):
+    red.moving_up = False
+    red.moving_down = False
     if keys_pressed[pygame.K_w] and red.y - speed > 38:  # UP
         red.y -= speed
+        red.moving_up = True
     if keys_pressed[pygame.K_s] and red.y + speed + red.height < HEIGHT - 10:  # DOWN
         red.y += speed
+        red.moving_down = True
+    return red
 
 
-def yellow_handle_movement(keys_pressed, yellow: pygame.Rect):
+def yellow_handle_movement(keys_pressed, yellow: Padel):
+    yellow.moving_up = False
+    yellow.moving_down = False
     if keys_pressed[pygame.K_UP] and yellow.y - speed > 38:  # UP
         yellow.y -= speed
+        yellow.moving_up = True
     if keys_pressed[pygame.K_DOWN] and yellow.y + speed + yellow.height < HEIGHT - 10:  # DOWN
         yellow.y += speed
+        yellow.moving_down = True
+    return yellow
 
 
-def handle_ball_movement(ball: Ball, yellow: pygame.Rect, red: pygame.Rect):
+def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel):
     global variable_speed
     global last_collided
     event = None
-    ball.move(speed)
+    ball.move(speed, WIDTH - 200)
 
     if ball.collide_padel(red):
         ball.collision_red(red)
@@ -162,8 +172,8 @@ def main():
                     not_paused = False
 
             keys_pressed = pygame.key.get_pressed()
-            red_handle_movement(keys_pressed, red)
-            yellow_handle_movement(keys_pressed, yellow)
+            red = red_handle_movement(keys_pressed, red)
+            yellow = yellow_handle_movement(keys_pressed, yellow)
 
             event = handle_ball_movement(ball, yellow, red)
             if event == "Red":
