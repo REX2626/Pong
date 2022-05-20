@@ -11,13 +11,13 @@ class Padel():
 
 
 class Ball():
-    def __init__(self, width, height, ball_width, ball_height, speed) -> None:
+    def __init__(self, width, height, ball_width, ball_height) -> None:
         self.x = width // 2
         self.y = random.randint(0.01 * height, 0.99 * height)
         self.width = ball_width
         self.height = ball_height
-        vx = random.random() * (0.8 * speed**2) + 0.1 * speed**2
-        vy = speed**2 - vx
+        vx = random.random() * 0.8 + 0.2
+        vy = 1 - vx
         self.vx, self.vy = vx**0.5, vy**0.5
         self.vx *= random.randint(0, 1) * 2 - 1
 
@@ -76,10 +76,10 @@ class Ball():
             return True
         return False
 
-    def restart(self, width, height, speed):
+    def restart(self, width, height):
         self.x = width // 2
         self.y = random.randint(0.01 * height, 0.99 * height)
-        vx = random.random() * (0.8 * speed**2) + 0.1 * speed**2
-        vy = speed**2 - vx
+        vx = random.random() * 0.8 + 0.2
+        vy = 1 - vx
         self.vx, self.vy = vx**0.5, vy**0.5
         self.vx *= random.randint(0, 1) * 2 - 1

@@ -1,3 +1,4 @@
+from time import perf_counter
 import pygame
 import os
 from objects import Ball, Padel
@@ -11,9 +12,8 @@ ICON = pygame.image.load(
     os.path.join('Assets', 'pong_icon.png'))
 pygame.display.set_icon(ICON)
 
-FPS = 150
-SPEED = 250 / FPS
-speed = SPEED
+SPEED = 250
+variable_speed = SPEED
 last_collided = None
 
 WHITE = (255, 255, 255)
@@ -70,41 +70,43 @@ def yellow_handle_movement(keys_pressed, yellow: pygame.Rect):
 
 
 def handle_ball_movement(ball: Ball, yellow: pygame.Rect, red: pygame.Rect):
-    global speed
+    global variable_speed
     global last_collided
     ball.move()
 
     if ball.collide_padel(red):
         ball.collision_red(red)
         if last_collided != red:
-            speed *= 1.05
+            variable_speed *= 1.05
             ball.increase_speed()
             last_collided = red
 
     elif ball.collide_padel(yellow):
         ball.collision_yellow(yellow)
         if last_collided != yellow:
-            speed *= 1.05
+            variable_speed *= 1.05
             ball.increase_speed()
             last_collided = yellow
 
     ball.boundary_collision(HEIGHT)
 
     if ball.scored(WIDTH):
-        ball.restart(WIDTH, HEIGHT, SPEED)
-        speed = SPEED
+        ball.restart(WIDTH, HEIGHT)
+        variable_speed = SPEED
 
 
 def main():
+    global speed
+    delta_time = 0
     red = Padel(RED_PADEL_X, PADEL_Y, PADEL_WIDTH, PADEL_HEIGHT)
     yellow = Padel(YELLOW_PADEL_X, PADEL_Y, PADEL_WIDTH, PADEL_HEIGHT)
 
-    ball = Ball(WIDTH, HEIGHT, BALL_WIDTH, BALL_HEIGHT, SPEED)
+    ball = Ball(WIDTH, HEIGHT, BALL_WIDTH, BALL_HEIGHT)
 
     run = True
-    clock = pygame.time.Clock()
     while run:
-        clock.tick(FPS)
+        time1 = perf_counter()
+        speed = variable_speed * delta_time
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -118,6 +120,8 @@ def main():
         handle_ball_movement(ball, yellow, red)
 
         draw_window(yellow, red, ball)
+        time2 = perf_counter()
+        delta_time = time2 - time1
 
 
 def main_menu():
