@@ -15,6 +15,7 @@ pygame.display.set_icon(ICON)
 SPEED = 230
 variable_speed = SPEED
 last_collided = None
+score_font = pygame.font.SysFont("comicsans", 20)
 
 WHITE = (255, 255, 255)
 LIGHT_GREY = (100, 100, 100)
@@ -73,7 +74,6 @@ def draw_window(yellow: pygame.Rect, red: pygame.Rect, ball: Ball, red_score, ye
     WIN.blit(RED_PADEL, (red.x, red.y))
     WIN.blit(get_ball(rally), (ball.x, ball.y))
 
-    score_font = pygame.font.SysFont("comicsans", 20)
     red_score_label = score_font.render(f"RED: {red_score}", True, WHITE)
     yellow_score_label = score_font.render(f"YELLOW: {yellow_score}", True, WHITE)
     rally_score_label = score_font.render(f"RALLY: {rally}", True, LIGHT_GREY)
@@ -86,14 +86,14 @@ def draw_window(yellow: pygame.Rect, red: pygame.Rect, ball: Ball, red_score, ye
 
 
 def red_handle_movement(keys_pressed, red: pygame.Rect):
-    if keys_pressed[pygame.K_w] and red.y - speed > 10:  # UP
+    if keys_pressed[pygame.K_w] and red.y - speed > 32:  # UP
         red.y -= speed
     if keys_pressed[pygame.K_s] and red.y + speed + red.height < HEIGHT - 10:  # DOWN
         red.y += speed
 
 
 def yellow_handle_movement(keys_pressed, yellow: pygame.Rect):
-    if keys_pressed[pygame.K_UP] and yellow.y - speed > 10:  # UP
+    if keys_pressed[pygame.K_UP] and yellow.y - speed > 32:  # UP
         yellow.y -= speed
     if keys_pressed[pygame.K_DOWN] and yellow.y + speed + yellow.height < HEIGHT - 10:  # DOWN
         yellow.y += speed

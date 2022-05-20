@@ -50,7 +50,7 @@ class Ball():
         self.vy += 0.05
 
     def boundary_collision(self, height):
-        if self.y < 0 or self.y + self.height > height:
+        if self.y < 30 or self.y + self.height > height - 2:
             self.vy *= -1
 
     def collide_padel(self, padel: Padel):
