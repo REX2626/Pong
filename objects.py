@@ -13,7 +13,7 @@ class Padel():
 class Ball():
     def __init__(self, width, height, ball_width, ball_height) -> None:
         self.x = width // 2
-        self.y = random.randint(0.01 * height, 0.99 * height)
+        self.y = random.randint(30, height - 2)
         self.width = ball_width
         self.height = ball_height
         vx = random.random() * 0.8 + 0.2
@@ -46,8 +46,9 @@ class Ball():
             self.vx = -abs(self.vx)
 
     def increase_speed(self):
-        self.vx += 0.05
-        self.vy += 0.05
+        self.vx *= 1.03
+        self.vy *= 1.03
+        print(self.vx, self.vy)
 
     def boundary_collision(self, height):
         if self.y < 30 or self.y + self.height > height - 2:
@@ -76,7 +77,7 @@ class Ball():
 
     def restart(self, width, height):
         self.x = width // 2
-        self.y = random.randint(0.01 * height, 0.99 * height)
+        self.y = random.randint(30, height - 2)
         vx = random.random() * 0.8 + 0.2
         vy = 1 - vx
         self.vx, self.vy = vx**0.5, vy**0.5
