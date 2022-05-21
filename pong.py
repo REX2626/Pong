@@ -23,6 +23,9 @@ MEDIUM_GREY = (60, 60, 60)
 DARK_GREY = (30, 30, 30)
 BLACK = (0, 0, 0)
 
+DASHED_WIDTH = 4
+DASHED_X = WIDTH / 2 - DASHED_WIDTH / 2
+
 PADEL_WIDTH, PADEL_HEIGHT = 13, 55
 RED_PADEL_X = 80
 YELLOW_PADEL_X = 820 - PADEL_WIDTH
@@ -44,36 +47,27 @@ BACKGROUND = pygame.transform.scale(
     BACKGROUND_IMAGE, (WIDTH, HEIGHT)).convert()
 
 BALL_WIDTH, BALL_HEIGHT = 8, 8
-BALL_IMAGES = {}
-for file in os.listdir(os.fsencode(os.path.join("Assets", "Balls"))):
-    BALL_IMAGE = pygame.image.load(
-        os.path.join('Assets', 'Balls', os.fsdecode(file)))
-    BALL = pygame.transform.scale(
-        BALL_IMAGE, (BALL_WIDTH, BALL_HEIGHT)).convert()
-    BALL_IMAGES[os.fsdecode(file)] = BALL
 
-def get_ball(rally):
-    if rally < 5:
-        return BALL_IMAGES["ball.png"]
-    elif rally < 10:
-        return BALL_IMAGES["ball_200.png"]
-    elif rally < 15:
-        return BALL_IMAGES["ball_150.png"]
-    elif rally < 20:
-        return BALL_IMAGES["ball_100.png"]
-    elif rally < 25:
-        return BALL_IMAGES["ball_50.png"]
-    else:
-        return BALL_IMAGES["ball_0.png"]
+
+def get_ball_colour(rally):
+    return (255, max(0, 255 - rally * 10), max(0, 255 - rally * 10))
+
+
+def draw_dashed_line():
+    pygame.draw.rect(WIN, WHITE, (DASHED_X, 38, DASHED_WIDTH, 50))
+    pygame.draw.rect(WIN, WHITE, (DASHED_X, 138, DASHED_WIDTH, 50))
+    pygame.draw.rect(WIN, WHITE, (DASHED_X, 238, DASHED_WIDTH, 50))
+    pygame.draw.rect(WIN, WHITE, (DASHED_X, 338, DASHED_WIDTH, 50))
+    pygame.draw.rect(WIN, WHITE, (DASHED_X, 438, DASHED_WIDTH, 50))
 
 
 def draw_window(yellow: pygame.Rect, red: pygame.Rect, ball: Ball, red_score, yellow_score, rally):
     WIN.fill(BLACK)
-    WIN.blit(BACKGROUND, (0, 15))
-    pygame.draw.rect(WIN, DARK_GREY, [0, 0, WIDTH, 28])
+    draw_dashed_line()
+    pygame.draw.rect(WIN, DARK_GREY, (0, 0, WIDTH, 28))
     WIN.blit(YELLOW_PADEL, (yellow.x, yellow.y))
     WIN.blit(RED_PADEL, (red.x, red.y))
-    WIN.blit(get_ball(rally), (ball.x, ball.y))
+    pygame.draw.rect(WIN, get_ball_colour(rally), (ball.x, ball.y, ball.width, ball.height))
 
     red_score_label = score_font.render(f"RED: {red_score}", True, WHITE)
     yellow_score_label = score_font.render(f"YELLOW: {yellow_score}", True, WHITE)
