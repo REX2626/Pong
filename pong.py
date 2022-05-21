@@ -2,7 +2,7 @@ from time import perf_counter
 import pygame
 import os
 from objects import Ball, Padel
-from menu import Menu
+import _menu
 pygame.init()
 
 WIDTH, HEIGHT = 900, 500
@@ -196,8 +196,8 @@ def main():
 
 
 def main_menu():
-    menu = Menu(HEIGHT, WIDTH, text_colour=WHITE)
-    menu.draw_menu(WIN, background_colour=DARK_GREY, box_colour=MEDIUM_GREY)
+    menu = _menu.Menu()
+    menu.draw_menu(WIN)
     run = True
     while run:
 
@@ -208,8 +208,7 @@ def main_menu():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse = pygame.mouse.get_pos()
-                if menu.clicked_on_start(mouse):
-                    main()
+                menu.mouse_click(mouse)
 
 
 if __name__ == "__main__":
