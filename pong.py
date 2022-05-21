@@ -41,11 +41,6 @@ RED_PADEL_IMAGE = pygame.image.load(
 RED_PADEL = pygame.transform.scale(
     RED_PADEL_IMAGE, (PADEL_WIDTH, PADEL_HEIGHT)).convert()
 
-BACKGROUND_IMAGE = pygame.image.load(
-    os.path.join('Assets', 'background.png'))
-BACKGROUND = pygame.transform.scale(
-    BACKGROUND_IMAGE, (WIDTH, HEIGHT)).convert()
-
 BALL_WIDTH, BALL_HEIGHT = 8, 8
 
 
