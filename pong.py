@@ -3,7 +3,7 @@ import pygame
 import os
 from objects import Ball, Padel
 from menu import Menu
-pygame.font.init()
+pygame.init()
 
 WIDTH, HEIGHT = 900, 500
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
