@@ -148,7 +148,7 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel):
     return event
 
 
-def main(red_handle_movement):
+def main(red_handle_movement, menu):
     global speed
     delta_time = 0
 
@@ -167,14 +167,6 @@ def main(red_handle_movement):
         while not_paused:
             time1 = perf_counter()
             speed = variable_speed * delta_time
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    not_paused = False
-                    running = False
-                    pygame.quit()
-
-                elif event.type == pygame.KEYDOWN and event.__dict__["key"] == pygame.K_ESCAPE:
-                    not_paused = False
 
             keys_pressed = pygame.key.get_pressed()
             red = red_handle_movement(keys_pressed, red, ball)
@@ -191,6 +183,18 @@ def main(red_handle_movement):
                 rally += 1
 
             draw_window(yellow, red, ball, red_score, yellow_score, rally)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    not_paused = False
+                    running = False
+                    pygame.quit()
+
+                elif event.type == pygame.KEYDOWN and event.__dict__["key"] == pygame.K_ESCAPE:
+                    not_paused = False
+                    menu.pause()
+
+
             time2 = perf_counter()
             delta_time = time2 - time1
         
@@ -206,10 +210,15 @@ def main(red_handle_movement):
             elif event.type == pygame.KEYDOWN and event.__dict__["key"] == pygame.K_ESCAPE:
                 not_paused = True
 
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse = pygame.mouse.get_pos()
+                menu.mouse_click(mouse)
+                running = False
+
 
 def main_menu():
     menu = _menu.Menu()
-    menu.draw_menu(WIN)
+    menu.draw_menu(WIN, DARK_GREY)
     run = True
     while run:
 

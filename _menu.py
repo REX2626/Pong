@@ -7,25 +7,46 @@ class Menu():
         self.screen_height = pong.HEIGHT
         self.background_colour = pong.DARK_GREY
         self.box_colour = pong.MEDIUM_GREY
-        self.singleplayer_button = Button(self.screen_width / 2, 100, "SINGLE PLAYER", pong.WHITE, self.box_colour, "comicsans", 40)
-        self.multiplayer_button = Button(self.screen_width / 2, 200, "MULTIPLAYER", pong.WHITE, self.box_colour, "comicsans", 40)
+
+        self.singleplayer_button = Button(self.screen_width / 2, 100,  lambda: pong.main(pong.red_bot_movement, self),"SINGLE PLAYER", pong.WHITE, self.box_colour, "comicsans", 40)
+        self.multiplayer_button = Button(self.screen_width / 2, 200, lambda: pong.main(pong.red_player_movement, self),"MULTIPLAYER", pong.WHITE, self.box_colour, "comicsans", 40)
+        self.back_to_menu_button = Button(self.screen_width / 2, 200, lambda: self.main_menu(), "MAIN MENU", pong.WHITE, self.box_colour, "comicsans", 40)
+
+        self.buttons = [self.singleplayer_button, self.multiplayer_button]
 
     def mouse_click(self, mouse):
-        if self.singleplayer_button.clicked_on(mouse[0], mouse[1]):
-            pong.main(pong.red_bot_movement)
-        elif self.multiplayer_button.clicked_on(mouse[0], mouse[1]):
-            pong.main(pong.red_player_movement)
+        for button in self.buttons:
+            if button.clicked_on(mouse[0], mouse[1]):
+                self.buttons = []
+                button.function()
 
-    def draw_menu(self, WIN: pygame.Surface):
-        WIN.fill(self.background_colour)
-        self.singleplayer_button.draw(WIN, self.box_colour)
-        self.multiplayer_button.draw(WIN, self.box_colour)
+    def draw_menu(self, WIN: pygame.Surface, colour=None):
+        if colour:
+            WIN.fill(colour)
+        for button in self.buttons:
+            button.draw(WIN, self.box_colour)
         pygame.display.update()
+
+    def pause(self):
+        self.buttons = [self.back_to_menu_button]
+        self.draw_menu(pong.WIN)
+
+    def main_menu(self):
+        self.buttons = [self.singleplayer_button, self.multiplayer_button]
+        self.draw_menu(pong.WIN, self.background_colour)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse = pygame.mouse.get_pos()
+                self.mouse_click(mouse)
 
 
 
 class Button():
-    def __init__(self, x, y, text, text_colour, colour, font, font_size) -> None:
+    def __init__(self, x, y, function, text, text_colour, colour, font, font_size) -> None:
+        self.function = function
         self.text = text
         self.text_colour = text_colour
         self.colour = colour
