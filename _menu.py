@@ -7,12 +7,14 @@ class Menu():
         self.screen_height = pong.HEIGHT
         self.background_colour = pong.DARK_GREY
         self.box_colour = pong.MEDIUM_GREY
+        self.setting_chosen = None
 
         self.singleplayer_button = Button(self.screen_width / 2, self.screen_height / 4,  lambda: pong.main(pong.red_bot_movement, self), "SINGLE PLAYER", pong.WHITE, self.box_colour, "comicsans", 40)
         self.multiplayer_button = Button(self.screen_width / 2, self.screen_height / 2, lambda: pong.main(pong.red_player_movement, self), "MULTIPLAYER", pong.WHITE, self.box_colour, "comicsans", 40)
         
         self.settings_button = Button(self.screen_width / 2, 3 * self.screen_height / 4, self.settings, "SETTINGS", pong.WHITE, self.box_colour, "comicsans", 40)
-        self.speed_button = Button(self.screen_width / 2, self.screen_height / 4, self.settings, "SPEED", pong.WHITE, self.box_colour, "comicsans", 40)
+        self.speed_button = Button(self.screen_width / 2, self.screen_height / 4, lambda: self.chosen_setting(self.speed_button), f"SPEED: {pong.SPEED}", pong.WHITE, self.box_colour, "comicsans", 40)
+        self.settings_dict = {self.speed_button: self.changed_speed}
 
         self.back_to_menu_button = Button(self.screen_width / 2, self.screen_height / 2, lambda: self.main_menu(), "MAIN MENU", pong.WHITE, self.box_colour, "comicsans", 40)
 
@@ -38,6 +40,36 @@ class Menu():
     def settings(self):
         self.buttons = [self.back_to_menu_button, self.speed_button]
         self.draw_menu(pong.WIN, self.background_colour)
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse = pygame.mouse.get_pos()
+                    self.setting_chosen = None
+                    self.mouse_click(mouse)
+
+            if self.setting_chosen:
+                keys_pressed = pygame.key.get_pressed()
+
+                if keys_pressed[pygame.K_UP]:
+                    self.settings_dict[self.setting_chosen](1)
+                    self.speed_button.update_text(f"SPEED: {pong.SPEED}")
+                    self.draw_menu(pong.WIN, self.background_colour)
+
+                if keys_pressed[pygame.K_DOWN]:
+                    self.settings_dict[self.setting_chosen](-1)
+                    self.speed_button.update_text(f"SPEED: {pong.SPEED}")
+                    self.draw_menu(pong.WIN, self.background_colour)
+
+    def chosen_setting(self, setting):
+        self.buttons = [self.back_to_menu_button, self.speed_button]
+        self.setting_chosen = setting
+
+    def changed_speed(self, change):
+        pong.SPEED = max(0, pong.SPEED + change)
+        pong.variable_speed = max(0, pong.variable_speed + change)
 
     def main_menu(self):
         self.buttons = [self.singleplayer_button, self.multiplayer_button, self.settings_button]
@@ -70,6 +102,10 @@ class Button():
         and mouse_x < self.x + self.width
         and mouse_y > self.y
         and mouse_y < self.y + self.height)
+
+    def update_text(self, text):
+        self.label = self.font.render(text, True, self.text_colour)
+        self.width = self.label.get_width()
 
     def draw(self, WIN: pygame.Surface, box_colour):
         pygame.draw.rect(WIN, box_colour, (self.x, self.y, self.width, self.height))
