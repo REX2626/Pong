@@ -7,15 +7,19 @@ class Menu():
         self.screen_height = pong.HEIGHT
         self.background_colour = pong.DARK_GREY
         self.box_colour = pong.MEDIUM_GREY
-        self.start_button = Button(self.screen_width / 2, 100, "START", pong.WHITE, self.box_colour, "comicsans", 40)
+        self.singleplayer_button = Button(self.screen_width / 2, 100, "SINGLE PLAYER", pong.WHITE, self.box_colour, "comicsans", 40)
+        self.multiplayer_button = Button(self.screen_width / 2, 200, "MULTIPLAYER", pong.WHITE, self.box_colour, "comicsans", 40)
 
     def mouse_click(self, mouse):
-        if self.start_button.clicked_on(mouse[0], mouse[1]):
-            pong.main()
+        if self.singleplayer_button.clicked_on(mouse[0], mouse[1]):
+            pong.main(pong.red_bot_movement)
+        elif self.multiplayer_button.clicked_on(mouse[0], mouse[1]):
+            pong.main(pong.red_player_movement)
 
-    def draw_menu(self, WIN: pygame.Surface, ):
+    def draw_menu(self, WIN: pygame.Surface):
         WIN.fill(self.background_colour)
-        self.start_button.draw(WIN, self.box_colour)
+        self.singleplayer_button.draw(WIN, self.box_colour)
+        self.multiplayer_button.draw(WIN, self.box_colour)
         pygame.display.update()
 
 

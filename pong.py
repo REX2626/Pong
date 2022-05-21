@@ -80,13 +80,25 @@ def draw_window(yellow: pygame.Rect, red: pygame.Rect, ball: Ball, red_score, ye
     pygame.display.update()
 
 
-def red_handle_movement(keys_pressed, red: Padel):
+def red_player_movement(keys_pressed, red: Padel, _):
     red.moving_up = False
     red.moving_down = False
     if keys_pressed[pygame.K_w] and red.y - speed > 38:  # UP
         red.y -= speed
         red.moving_up = True
     if keys_pressed[pygame.K_s] and red.y + speed + red.height < HEIGHT - 10:  # DOWN
+        red.y += speed
+        red.moving_down = True
+    return red
+
+
+def red_bot_movement(_, red: Padel, ball: Ball):
+    red.moving_up = False
+    red.moving_down = False
+    if ball.y + ball.height / 2 < red.y + red.height / 2 and red.y - speed > 38: # If ball higher than padel - move up
+        red.y -= speed
+        red.moving_up = True
+    elif ball.y + ball.height / 2 > red.y + red.height / 2 and red.y + speed + red.height < HEIGHT - 10: # If ball lower than padel - move down
         red.y += speed
         red.moving_down = True
     return red
@@ -136,7 +148,7 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel):
     return event
 
 
-def main():
+def main(red_handle_movement):
     global speed
     delta_time = 0
 
@@ -165,7 +177,7 @@ def main():
                     not_paused = False
 
             keys_pressed = pygame.key.get_pressed()
-            red = red_handle_movement(keys_pressed, red)
+            red = red_handle_movement(keys_pressed, red, ball)
             yellow = yellow_handle_movement(keys_pressed, yellow)
 
             event = handle_ball_movement(ball, yellow, red)
