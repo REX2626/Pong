@@ -117,14 +117,14 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel):
     ball.move(speed, WIDTH // 2)
 
     if ball.collide_padel(red):
-        ball.collision_red(red, spin=last_collided != red)
+        ball.collision_red(red, spin=last_collided != red, speed=speed, screen_width=WIDTH)
         if last_collided != red:
             variable_speed *= 1.03
             last_collided = red
             event = "Rally"
 
     elif ball.collide_padel(yellow):
-        ball.collision_yellow(yellow, spin=last_collided != yellow)
+        ball.collision_yellow(yellow, spin=last_collided != yellow, speed=speed, screen_width=WIDTH)
         if last_collided != yellow:
             variable_speed *= 1.03
             last_collided = yellow
@@ -161,7 +161,6 @@ def main():
         while not_paused:
             time1 = perf_counter()
             speed = variable_speed * delta_time
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     not_paused = False
