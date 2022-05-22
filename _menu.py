@@ -13,9 +13,10 @@ class Menu():
         self.singleplayer_button = Button(self.screen_width / 2, self.screen_height / 4,  lambda: pong.main(pong.red_bot_movement, self), "SINGLE PLAYER", pong.WHITE, self.box_colour, "comicsans", 40)
         self.multiplayer_button = Button(self.screen_width / 2, self.screen_height / 2, lambda: pong.main(pong.red_player_movement, self), "MULTIPLAYER", pong.WHITE, self.box_colour, "comicsans", 40)
         
-        self.settings_button = Button(self.screen_width / 2, 3 * self.screen_height / 4, self.settings, "SETTINGS", pong.WHITE, self.box_colour, "comicsans", 40)
-        self.speed_button = Button(self.screen_width / 2, self.screen_height / 4, lambda: self.chosen_setting(self.speed_button), f"SPEED: {pong.SPEED}", pong.WHITE, self.box_colour, "comicsans", 40)
-        self.settings_dict = {self.speed_button: self.changed_speed}
+        self.settings_button = Button(self.screen_width / 2, self.screen_height * 3 / 4, self.settings, "SETTINGS", pong.WHITE, self.box_colour, "comicsans", 40)
+        self.speed_button = SettingButton(self.screen_width / 2, self.screen_height / 4, lambda: self.chosen_setting(self.speed_button), lambda: f"SPEED: {pong.SPEED}", pong.WHITE, self.box_colour, "comicsans", 40)
+        self.ball_size_button = SettingButton(self.screen_width / 2, self.screen_height / 2, lambda: self.chosen_setting(self.ball_size_button), lambda: f"BALL SIZE: {pong.BALL_WIDTH}", pong.WHITE, self.box_colour, "comicsans", 40)
+        self.settings_dict = {self.speed_button: self.change_speed, self.ball_size_button: self.change_ball_size}
 
         self.back_to_menu_button = Button(self.screen_width / 2, self.screen_height / 2, lambda: self.main_menu(), "MAIN MENU", pong.WHITE, self.box_colour, "comicsans", 40)
 
@@ -27,20 +28,21 @@ class Menu():
                 self.buttons = []
                 button.function()
 
-    def draw_menu(self, WIN: pygame.Surface, colour=None):
+    def draw_menu(self, colour=None):
         if colour:
-            WIN.fill(colour)
+            pong.WIN.fill(colour)
         for button in self.buttons:
-            button.draw(WIN, self.box_colour)
+            button.draw()
         pygame.display.update()
 
     def pause(self):
         self.buttons = [self.back_to_menu_button]
-        self.draw_menu(pong.WIN)
+        self.draw_menu()
 
     def settings(self):
-        self.buttons = [self.back_to_menu_button, self.speed_button]
-        self.draw_menu(pong.WIN, self.background_colour)
+        self.back_to_menu_button.y = self.screen_height * 3 / 4
+        self.buttons = [self.back_to_menu_button, self.speed_button, self.ball_size_button]
+        self.draw_menu(self.background_colour)
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -49,7 +51,11 @@ class Menu():
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse = pygame.mouse.get_pos()
-                    self.setting_chosen = None
+                    if self.setting_chosen:
+                        self.setting_chosen.outline = self.box_colour
+                        self.setting_chosen.draw()
+                        self.draw_menu()
+                        self.setting_chosen = None
                     self.mouse_click(mouse)
 
             if self.setting_chosen:
@@ -57,25 +63,32 @@ class Menu():
 
                 if keys_pressed[pygame.K_UP]:
                     self.settings_dict[self.setting_chosen](1)
-                    self.speed_button.update_text(f"SPEED: {pong.SPEED}")
-                    self.draw_menu(pong.WIN, self.background_colour)
+                    self.setting_chosen.update_text()
+                    self.draw_menu(self.background_colour)
 
                 if keys_pressed[pygame.K_DOWN]:
                     self.settings_dict[self.setting_chosen](-1)
-                    self.speed_button.update_text(f"SPEED: {pong.SPEED}")
-                    self.draw_menu(pong.WIN, self.background_colour)
+                    self.setting_chosen.update_text()
+                    self.draw_menu(self.background_colour)
 
     def chosen_setting(self, setting):
-        self.buttons = [self.back_to_menu_button, self.speed_button]
+        self.buttons = [self.back_to_menu_button, self.speed_button, self.ball_size_button]
+        setting.outline = pong.LIGHT_GREY
+        setting.draw()
+        self.draw_menu()
         self.setting_chosen = setting
 
-    def changed_speed(self, change):
+    def change_speed(self, change):
         pong.SPEED = max(0, pong.SPEED + change)
         pong.variable_speed = max(0, pong.variable_speed + change)
 
+    def change_ball_size(self, change):
+        pong.BALL_HEIGHT = max(0, pong.BALL_HEIGHT + change)
+        pong.BALL_WIDTH = max(0, pong.BALL_WIDTH + change)
+
     def main_menu(self):
         self.buttons = [self.singleplayer_button, self.multiplayer_button, self.settings_button]
-        self.draw_menu(pong.WIN, self.background_colour)
+        self.draw_menu(self.background_colour)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -89,9 +102,9 @@ class Menu():
 class Button():
     def __init__(self, x, y, function, text, text_colour, colour, font, font_size) -> None:
         self.function = function
-        self.text = text
         self.text_colour = text_colour
         self.colour = colour
+        self.outline = colour
         self.font = pygame.font.SysFont(font, font_size)
         self.label = self.font.render(text, True, text_colour)
         self.width = self.label.get_width()
@@ -105,10 +118,18 @@ class Button():
         and mouse_y > self.y
         and mouse_y < self.y + self.height)
 
-    def update_text(self, text):
-        self.label = self.font.render(text, True, self.text_colour)
-        self.width = self.label.get_width()
+    def draw(self):
+        pygame.draw.rect(pong.WIN, self.colour, (self.x, self.y, self.width, self.height))
+        pygame.draw.rect(pong.WIN, self.outline, (self.x, self.y, self.width, self.height), width=3)
+        pong.WIN.blit(self.label, (self.x, self.y))
 
-    def draw(self, WIN: pygame.Surface, box_colour):
-        pygame.draw.rect(WIN, box_colour, (self.x, self.y, self.width, self.height))
-        WIN.blit(self.label, (self.x, self.y))
+
+
+class SettingButton(Button):
+    def __init__(self, x, y, function, text, text_colour, colour, font, font_size) -> None:
+        self.get_text = text
+        super().__init__(x, y, function, self.get_text(), text_colour, colour, font, font_size)
+
+    def update_text(self):
+        self.label = self.font.render(self.get_text(), True, self.text_colour)
+        self.width = self.label.get_width()

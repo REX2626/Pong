@@ -114,7 +114,7 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel):
             event = "Rally"
 
     elif ball.collide_padel(yellow):
-        ball.collision_yellow(yellow, spin=last_collided != yellow, speed=speed, screen_width=WIDTH, variable_speed=variable_speed)
+        ball.collision_yellow(yellow, spin=last_collided != yellow, speed=speed, screen_width=WIDTH)
         if last_collided != yellow:
             variable_speed *= 1.03
             last_collided = yellow
@@ -150,7 +150,6 @@ def main(red_handle_movement, menu):
     while running:
         while not_paused:
             time1 = perf_counter()
-            if delta_time:print(1/delta_time)
             speed = variable_speed * delta_time
 
             keys_pressed = pygame.key.get_pressed()
@@ -204,7 +203,7 @@ def main(red_handle_movement, menu):
 
 def main_menu():
     menu = _menu.Menu()
-    menu.draw_menu(WIN, DARK_GREY)
+    menu.draw_menu(DARK_GREY)
     run = True
     while run:
 

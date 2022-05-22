@@ -99,7 +99,7 @@ class Ball():
                     self.spinx += 0.5
             self.move_out_collision_spin(speed + multiplier, screen_width)
 
-    def collision_yellow(self, padel: Padel, spin, speed, screen_width, variable_speed):
+    def collision_yellow(self, padel: Padel, spin, speed, screen_width):
         if padel.moving_down:
             self.y += speed
         if padel.moving_up:
