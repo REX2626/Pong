@@ -13,7 +13,7 @@ class Padel():
 
 class Ball():
     def __init__(self, width, height, ball_width, ball_height) -> None:
-        self.x = width // 2
+        self.x = width / 2 - ball_width / 2
         self.y = random.randint(30, height - ball_height - 2)
         self.width = ball_width
         self.height = ball_height
@@ -168,7 +168,7 @@ class Ball():
             return "Red"
 
     def restart(self, width, height):
-        self.x = width // 2
+        self.x = width / 2 - self.width / 2
         self.y = random.randint(30, height - self.height - 2)
         self.spinx = 0
         self.spiny = 0
