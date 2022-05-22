@@ -83,8 +83,8 @@ class Menu():
         pong.variable_speed = max(0, pong.variable_speed + change)
 
     def change_ball_size(self, change):
-        pong.BALL_HEIGHT = max(0, pong.BALL_HEIGHT + change)
-        pong.BALL_WIDTH = max(0, pong.BALL_WIDTH + change)
+        pong.BALL_HEIGHT = max(0, min(min(pong.WIDTH, pong.HEIGHT), pong.BALL_HEIGHT + change))
+        pong.BALL_WIDTH = max(0, min(min(pong.WIDTH, pong.HEIGHT), pong.BALL_HEIGHT + change))
 
     def main_menu(self):
         self.buttons = [self.singleplayer_button, self.multiplayer_button, self.settings_button]
