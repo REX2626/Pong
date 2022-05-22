@@ -2,6 +2,7 @@ from time import perf_counter
 import pygame
 from objects import Ball, Padel
 import _menu
+import sys
 pygame.init()
 
 WIDTH, HEIGHT = 900, 500
@@ -149,6 +150,7 @@ def main(red_handle_movement, menu):
     while running:
         while not_paused:
             time1 = perf_counter()
+            if delta_time:print(1/delta_time)
             speed = variable_speed * delta_time
 
             keys_pressed = pygame.key.get_pressed()
@@ -172,6 +174,7 @@ def main(red_handle_movement, menu):
                     not_paused = False
                     running = False
                     pygame.quit()
+                    sys.exit()
 
                 elif event.type == pygame.KEYDOWN and event.__dict__["key"] == pygame.K_ESCAPE:
                     not_paused = False

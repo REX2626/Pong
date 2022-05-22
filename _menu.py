@@ -1,5 +1,6 @@
 import pygame
 import pong
+import sys
 
 class Menu():
     def __init__(self) -> None:
@@ -44,6 +45,7 @@ class Menu():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
+                    sys.exit()
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse = pygame.mouse.get_pos()
