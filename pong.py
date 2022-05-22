@@ -1,6 +1,5 @@
 from time import perf_counter
 import pygame
-import os
 from objects import Ball, Padel
 import _menu
 pygame.init()
@@ -8,9 +7,6 @@ pygame.init()
 WIDTH, HEIGHT = 900, 500
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("GamingX Pong")
-ICON = pygame.image.load(
-    os.path.join('Assets', 'pong_icon.png'))
-pygame.display.set_icon(ICON)
 
 SPEED = 230
 variable_speed = SPEED
@@ -22,6 +18,8 @@ LIGHT_GREY = (120, 120, 120)
 MEDIUM_GREY = (60, 60, 60)
 DARK_GREY = (30, 30, 30)
 BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+YELLOW = (255, 255, 0)
 
 DASHED_WIDTH = 4
 DASHED_X = WIDTH / 2 - DASHED_WIDTH / 2
@@ -30,16 +28,6 @@ PADEL_WIDTH, PADEL_HEIGHT = 13, 55
 RED_PADEL_X = 80
 YELLOW_PADEL_X = 820 - PADEL_WIDTH
 PADEL_Y = 250 - PADEL_HEIGHT // 2
-
-YELLOW_PADEL_IMAGE = pygame.image.load(
-    os.path.join('Assets', 'padel_yellow.png'))
-YELLOW_PADEL = pygame.transform.scale(
-    YELLOW_PADEL_IMAGE, (PADEL_WIDTH, PADEL_HEIGHT)).convert()
-
-RED_PADEL_IMAGE = pygame.image.load(
-    os.path.join('Assets', 'padel_red.png'))
-RED_PADEL = pygame.transform.scale(
-    RED_PADEL_IMAGE, (PADEL_WIDTH, PADEL_HEIGHT)).convert()
 
 BALL_WIDTH, BALL_HEIGHT = 8, 8
 
@@ -60,8 +48,8 @@ def draw_window(yellow: pygame.Rect, red: pygame.Rect, ball: Ball, red_score, ye
     WIN.fill(BLACK)
     draw_dashed_line()
     pygame.draw.rect(WIN, DARK_GREY, (0, 0, WIDTH, 28))
-    WIN.blit(YELLOW_PADEL, (yellow.x, yellow.y))
-    WIN.blit(RED_PADEL, (red.x, red.y))
+    pygame.draw.rect(WIN, RED, (red.x, red.y, PADEL_WIDTH, PADEL_HEIGHT))
+    pygame.draw.rect(WIN, YELLOW, (yellow.x, yellow.y, PADEL_WIDTH, PADEL_HEIGHT))
     pygame.draw.rect(WIN, get_ball_colour(rally), (ball.x, ball.y, ball.width, ball.height))
 
     red_score_label = score_font.render(f"RED: {red_score}", True, WHITE)
