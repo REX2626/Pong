@@ -19,6 +19,7 @@ class Ball():
         self.height = ball_height
         self.spinx = 0
         self.spiny = 0
+        self.side_hit = False
         vx = random.random() * 0.8 + 0.2
         vy = 1 - vx
         self.vx, self.vy = vx**0.5, vy**0.5
@@ -57,22 +58,33 @@ class Ball():
                 self.spiny += min(-self.spiny, multiplier / screen_width)
 
     def collision_red(self, padel: Padel, spin, speed, screen_width):
+        if padel.moving_down:
+            self.y += speed
+        if padel.moving_up:
+            self.y -= speed
         x, y = self.x, self.y
-        if padel.x + padel.width - x > padel.y + padel.height - y: # Top left ball to bottom right padel
+
+        if padel.x + padel.width - x > padel.y + padel.height - y and y >= padel.y + padel.height / 2: # Top left ball to bottom right padel
             multiplier = (padel.y + padel.height - y) / self.vy
-            self.move_out_collision(multiplier)
+            multiplier = min(1, multiplier)
+            self.move_out_collision(-multiplier)
             self.vy = abs(self.vy)
-            if padel.moving_down:
-                self.vy *= 1.5
+            if not self.side_hit and padel.moving_down:
+                self.vy -= 1
+                self.side_hit = True
             self.move_out_collision(speed + multiplier)
-        elif padel.x + padel.width - x > y + self.height - padel.y: # Bottom left ball to top right padel
+
+        if padel.x + padel.width - x > y + self.height - padel.y and y < padel.y + padel.height / 2: # Bottom left ball to top right padel
             multiplier = (y + self.height - padel.y) / self.vy
+            multiplier = max(-1, multiplier)
             self.move_out_collision(multiplier)
             self.vy = -abs(self.vy)
-            if padel.moving_up:
-                self.vy *= 1.5
+            if not self.side_hit and padel.moving_up:
+                self.vy += 1
+                self.side_hit = True
             self.move_out_collision(speed + multiplier)
-        else:
+
+        if (x, y) == (self.x, self.y):
             dist_to_centre = (y + self.height / 2) - (padel.y + padel.height / 2) # Distance from center of ball to centre of padel
             multiplier = (padel.x + padel.width - x) / self.vx
             self.move_out_collision(multiplier)
@@ -87,23 +99,34 @@ class Ball():
                     self.spinx += 0.5
             self.move_out_collision_spin(speed + multiplier, screen_width)
 
-    def collision_yellow(self, padel: Padel, spin, speed, screen_width):
+    def collision_yellow(self, padel: Padel, spin, speed, screen_width, variable_speed):
+        if padel.moving_down:
+            self.y += speed
+        if padel.moving_up:
+            self.y -= speed
         x, y = self.x, self.y
-        if x + self.width - padel.x > padel.y + padel.height - y: # Top right ball to bottom left padel
+
+        if x + self.width - padel.x > padel.y + padel.height - y and y >= padel.y + padel.height / 2: # Top right ball to bottom left padel
             multiplier = (padel.y + padel.height - y) / self.vy
-            self.move_out_collision(multiplier)
+            multiplier = min(1, multiplier)
+            self.move_out_collision(-multiplier)
             self.vy = abs(self.vy)
-            if padel.moving_down:
-                self.vy *= 1.5
+            if not self.side_hit and padel.moving_down:
+                self.vy -= 1
+                self.side_hit = True
             self.move_out_collision(speed + multiplier)
-        elif x + self.width - padel.x > y + self.height - padel.y: # Bottom right ball to top left padel
+
+        if x + self.width - padel.x > y + self.height - padel.y and y < padel.y + padel.height / 2: # Bottom right ball to top left padel
             multiplier = (y + self.height - padel.y) / self.vy
-            self.move_out_collision(multiplier)
+            multiplier = max(-1, multiplier)
+            self.move_out_collision(-multiplier)
             self.vy = -abs(self.vy)
-            if padel.moving_up:
-                self.vy *= 1.5
+            if not self.side_hit and padel.moving_up:
+                self.vy += 1
+                self.side_hit = True
             self.move_out_collision(speed + multiplier)
-        else:
+
+        if (x, y) == (self.x, self.y):
             dist_to_centre = (y + self.height / 2) - (padel.y + padel.height / 2) # Distance from center of ball to centre of padel
             multiplier = (x + self.width - padel.x) / self.vx
             self.move_out_collision(multiplier)
@@ -149,6 +172,7 @@ class Ball():
         self.y = random.randint(30, height - self.height - 2)
         self.spinx = 0
         self.spiny = 0
+        self.side_hit = False
         vx = random.random() * 0.8 + 0.2
         vy = 1 - vx
         self.vx, self.vy = vx**0.5, vy**0.5

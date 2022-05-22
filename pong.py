@@ -125,7 +125,7 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel):
             event = "Rally"
 
     elif ball.collide_padel(yellow):
-        ball.collision_yellow(yellow, spin=last_collided != yellow, speed=speed, screen_width=WIDTH)
+        ball.collision_yellow(yellow, spin=last_collided != yellow, speed=speed, screen_width=WIDTH, variable_speed=variable_speed)
         if last_collided != yellow:
             variable_speed *= 1.03
             last_collided = yellow
