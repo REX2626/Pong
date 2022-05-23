@@ -117,15 +117,15 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel):
     event = None
     ball.move(speed)
 
-    if ball.collide_padel(red):
-        ball.collision_red(red, spin=last_collided != red, speed=speed)
+    if ball.collides_with_paddle_test(red):
+        ball.handle_paddle_collisions(red, spin=last_collided != red)
         if last_collided != red:
             variable_speed *= 1.03
             last_collided = red
             event = "Rally"
 
-    elif ball.collide_padel(yellow):
-        ball.collision_yellow(yellow, spin=last_collided != yellow, speed=speed)
+    elif ball.collides_with_paddle_test(yellow):
+        ball.handle_paddle_collisions(yellow, spin=last_collided != yellow)
         if last_collided != yellow:
             variable_speed *= 1.03
             last_collided = yellow
