@@ -11,25 +11,30 @@ class Menu():
         self.box_colour = pong.MEDIUM_GREY
         self.setting_chosen = None
 
-        self.singleplayer_button = Button(self.screen_width / 2, self.screen_height / 4,  lambda: pong.main(pong.red_bot_movement, self), "SINGLE PLAYER", pong.WHITE, self.box_colour, "comicsans", 40)
-        self.multiplayer_button = Button(self.screen_width / 2, self.screen_height / 2, lambda: pong.main(pong.red_player_movement, self), "MULTIPLAYER", pong.WHITE, self.box_colour, "comicsans", 40)
-        
-        self.settings_button = Button(self.screen_width / 2, self.screen_height * 3 / 4, self.settings, "SETTINGS", pong.WHITE, self.box_colour, "comicsans", 40)
-        self.speed_button = SettingButton(self.screen_width / 2, self.screen_height / 6, lambda: self.chosen_setting(self.speed_button), lambda: f"SPEED: {pong.SPEED}", pong.WHITE, self.box_colour, "comicsans", 40)
-        self.ball_size_button = SettingButton(self.screen_width / 2, self.screen_height  / 3, lambda: self.chosen_setting(self.ball_size_button), lambda: f"BALL SIZE: {pong.BALL_WIDTH}", pong.WHITE, self.box_colour, "comicsans", 40)
-        self.padel_width_button = SettingButton(self.screen_width / 2, self.screen_height / 2, lambda: self.chosen_setting(self.padel_width_button), lambda: f"PADEL WIDTH: {pong.PADEL_WIDTH}", pong.WHITE, self.box_colour, "comicsans", 40)
-        self.padel_height_button = SettingButton(self.screen_width / 2, self.screen_height * 2 / 3, lambda: self.chosen_setting(self.padel_height_button), lambda: f"PADEL HEIGHT: {pong.PADEL_HEIGHT}", pong.WHITE, self.box_colour, "comicsans", 40)
-        
+        self.singleplayer_button = Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 4,  lambda: pong.main(pong.red_bot_movement, self), "SINGLE PLAYER", pong.WHITE, self.box_colour, "comicsans", 40)
+        self.multiplayer_button = Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 2, lambda: pong.main(pong.red_player_movement, self), "MULTIPLAYER", pong.WHITE, self.box_colour, "comicsans", 40)
+
+        self.settings_button = Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT * 3 / 4, self.settings, "SETTINGS", pong.WHITE, self.box_colour, "comicsans", 40)
+        self.screen_width_button = SettingButton(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 8, lambda: self.chosen_setting(self.screen_width_button), lambda: f"SCREEN WIDTH: {pong.WIDTH}", pong.WHITE, self.box_colour, "comicsans", 40)
+        self.screen_height_button = SettingButton(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 4, lambda: self.chosen_setting(self.screen_height_button), lambda: f"SCREEN HEIGHT: {pong.HEIGHT}", pong.WHITE, self.box_colour, "comicsans", 40)
+        self.speed_button = SettingButton(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT * 3 / 8, lambda: self.chosen_setting(self.speed_button), lambda: f"SPEED: {pong.SPEED}", pong.WHITE, self.box_colour, "comicsans", 40)
+        self.ball_size_button = SettingButton(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT  / 2, lambda: self.chosen_setting(self.ball_size_button), lambda: f"BALL SIZE: {pong.BALL_WIDTH}", pong.WHITE, self.box_colour, "comicsans", 40)
+        self.padel_width_button = SettingButton(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT * 5 / 8, lambda: self.chosen_setting(self.padel_width_button), lambda: f"PADEL WIDTH: {pong.PADEL_WIDTH}", pong.WHITE, self.box_colour, "comicsans", 40)
+        self.padel_height_button = SettingButton(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT * 3 / 4, lambda: self.chosen_setting(self.padel_height_button), lambda: f"PADEL HEIGHT: {pong.PADEL_HEIGHT}", pong.WHITE, self.box_colour, "comicsans", 40)
+
         self.settings_dict = {
+            self.screen_width_button: self.change_screen_width,
+            self.screen_height_button: self.change_screen_height,
             self.speed_button: self.change_speed,
             self.ball_size_button: self.change_ball_size,
             self.padel_width_button: self.change_padel_width,
             self.padel_height_button: self.change_padel_height
             }
 
-        self.back_to_menu_button = Button(self.screen_width / 2, self.screen_height / 2, lambda: self.main_menu(), "MAIN MENU", pong.WHITE, self.box_colour, "comicsans", 40)
+        self.back_to_menu_button = Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 2, lambda: self.main_menu(), "MAIN MENU", pong.WHITE, self.box_colour, "comicsans", 40)
 
         self.buttons = [self.singleplayer_button, self.multiplayer_button, self.settings_button]
+        self.all_buttons = [*self.settings_dict.keys()] + self.buttons + [self.back_to_menu_button]
 
     def mouse_click(self, mouse):
         for button in self.buttons:
@@ -48,8 +53,9 @@ class Menu():
         self.draw_menu()
 
     def settings(self):
-        self.back_to_menu_button.y = self.screen_height * 5 / 6
-        self.buttons = [self.back_to_menu_button] + [*self.settings_dict.keys()]
+        self.back_to_menu_button.get_y = lambda: pong.HEIGHT * 7 / 8
+        self.back_to_menu_button.update()
+        self.buttons = [*self.settings_dict.keys()] + [self.back_to_menu_button]
         self.draw_menu(self.background_colour)
         keys_down = False
         while True:
@@ -102,6 +108,20 @@ class Menu():
         self.draw_menu()
         self.setting_chosen = setting
 
+    def change_screen_width(self, change):
+        pong.WIDTH = max(0, pong.WIDTH + change)
+        for button in self.all_buttons:
+            button.update()
+        pong.update_screen_size()
+        pygame.display.set_mode((pong.WIDTH, pong.HEIGHT))
+
+    def change_screen_height(self, change):
+        pong.HEIGHT = max(0, pong.HEIGHT + change)
+        for button in self.all_buttons:
+            button.update()
+        pong.update_screen_size()
+        pygame.display.set_mode((pong.WIDTH, pong.HEIGHT))
+
     def change_speed(self, change):
         pong.SPEED = max(0, pong.SPEED + change)
         pong.variable_speed = max(0, pong.variable_speed + change)
@@ -118,7 +138,8 @@ class Menu():
         pong.PADEL_HEIGHT = max(0, min(pong.HEIGHT - pong.TEXT_BAR_HEIGHT - 2 * pong.PADEL_INDENT, pong.PADEL_HEIGHT + change))
 
     def main_menu(self):
-        self.back_to_menu_button.y = self.screen_height / 2
+        self.back_to_menu_button.get_y = lambda: pong.HEIGHT / 2
+        self.back_to_menu_button.update()
         self.buttons = [self.singleplayer_button, self.multiplayer_button, self.settings_button]
         self.draw_menu(self.background_colour)
         for event in pygame.event.get():
@@ -132,7 +153,7 @@ class Menu():
 
 
 class Button():
-    def __init__(self, x, y, function, text, text_colour, colour, font, font_size) -> None:
+    def __init__(self, get_x, get_y, function, text, text_colour, colour, font, font_size) -> None:
         self.function = function
         self.text_colour = text_colour
         self.colour = colour
@@ -141,14 +162,20 @@ class Button():
         self.label = self.font.render(text, True, text_colour)
         self.width = self.label.get_width()
         self.height = self.label.get_height()
-        self.x = x - self.width / 2
-        self.y = y - self.height / 2
+        self.get_x = get_x
+        self.get_y = get_y
+        self.x = get_x() - self.width / 2
+        self.y = get_y() - self.height / 2
 
     def clicked_on(self, mouse_x, mouse_y):
         return (mouse_x > self.x
         and mouse_x < self.x + self.width
         and mouse_y > self.y
         and mouse_y < self.y + self.height)
+
+    def update(self):
+        self.x = self.get_x() - self.width / 2
+        self.y = self.get_y() - self.height / 2
 
     def draw(self):
         pygame.draw.rect(pong.WIN, self.colour, (self.x, self.y, self.width, self.height))
