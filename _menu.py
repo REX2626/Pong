@@ -111,7 +111,8 @@ class Menu():
         pong.BALL_WIDTH = max(0, min(min(pong.WIDTH, pong.HEIGHT - 32), pong.BALL_HEIGHT + change))
 
     def change_padel_width(self, change):
-        pong.PADEL_WIDTH = max(0, min(pong.WIDTH / 2, pong.PADEL_WIDTH + change))
+        pong.PADEL_WIDTH = max(0, min(pong.WIDTH - pong.PADEL_SIDE_INDENT * 2, pong.PADEL_WIDTH + change))
+        pong.YELLOW_PADEL_X = pong.WIDTH - pong.PADEL_SIDE_INDENT - pong.PADEL_WIDTH
 
     def change_padel_height(self, change):
         pong.PADEL_HEIGHT = max(0, min(pong.HEIGHT - pong.TEXT_BAR_HEIGHT - 2 * pong.PADEL_INDENT, pong.PADEL_HEIGHT + change))
