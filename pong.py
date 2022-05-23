@@ -191,9 +191,6 @@ def main(red_handle_movement, menu):
             time2 = perf_counter()
             delta_time = time2 - time1
         
-        if not running:
-            break
-        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 not_paused = False
