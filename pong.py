@@ -73,7 +73,7 @@ def draw_window(yellow: pygame.Rect, red: pygame.Rect, ball: Ball, red_score, ye
     pygame.display.update()
 
 
-def red_player_movement(keys_pressed, red: Padel, _):
+def red_player_movement(keys_pressed, red: Padel, _, speed):
     red.moving_up = False
     red.moving_down = False
     if keys_pressed[pygame.K_w] and red.y - speed > TEXT_BAR_HEIGHT + PADEL_INDENT:  # UP
@@ -85,7 +85,7 @@ def red_player_movement(keys_pressed, red: Padel, _):
     return red
 
 
-def red_bot_movement(_, red: Padel, ball: Ball):
+def red_bot_movement(_, red: Padel, ball: Ball, speed):
     red.moving_up = False
     red.moving_down = False
     if ball.y + ball.height / 2 < red.y + red.height / 2 and red.y - speed > TEXT_BAR_HEIGHT + PADEL_INDENT: # If ball higher than padel - move up
@@ -97,7 +97,7 @@ def red_bot_movement(_, red: Padel, ball: Ball):
     return red
 
 
-def yellow_handle_movement(keys_pressed, yellow: Padel):
+def yellow_handle_movement(keys_pressed, yellow: Padel, speed):
     yellow.moving_up = False
     yellow.moving_down = False
     if keys_pressed[pygame.K_UP] and yellow.y - speed > TEXT_BAR_HEIGHT + PADEL_INDENT:  # UP
@@ -109,7 +109,7 @@ def yellow_handle_movement(keys_pressed, yellow: Padel):
     return yellow
 
 
-def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel):
+def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel, speed):
     global variable_speed
     global last_collided
     event = None
@@ -142,7 +142,6 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel):
 
 
 def main(red_handle_movement, menu):
-    global speed
     delta_time = 0
 
     red_score = 0
@@ -162,10 +161,10 @@ def main(red_handle_movement, menu):
             speed = variable_speed * delta_time
 
             keys_pressed = pygame.key.get_pressed()
-            red = red_handle_movement(keys_pressed, red, ball)
-            yellow = yellow_handle_movement(keys_pressed, yellow)
+            red = red_handle_movement(keys_pressed, red, ball, speed)
+            yellow = yellow_handle_movement(keys_pressed, yellow, speed)
 
-            event = handle_ball_movement(ball, yellow, red)
+            event = handle_ball_movement(ball, yellow, red, speed)
             if event == "Red":
                 red_score += 1
                 rally = 0
