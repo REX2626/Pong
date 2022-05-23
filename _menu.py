@@ -102,6 +102,7 @@ class Menu():
         pong.BALL_WIDTH = max(0, min(min(pong.WIDTH, pong.HEIGHT - 32), pong.BALL_HEIGHT + change))
 
     def main_menu(self):
+        self.back_to_menu_button.y = self.screen_height / 2
         self.buttons = [self.singleplayer_button, self.multiplayer_button, self.settings_button]
         self.draw_menu(self.background_colour)
         for event in pygame.event.get():
