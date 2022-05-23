@@ -13,51 +13,45 @@ class Padel():
 
 class Ball():
     def __init__(self, width, height, ball_width, ball_height) -> None:
-        self.x = width / 2 - ball_width / 2
-        self.y = random.randint(30, height - ball_height - 2)
+        self.screen_width = width
+        self.screen_height = height
         self.width = ball_width
         self.height = ball_height
-        self.spinx = 0
-        self.spiny = 0
-        self.side_hit = False
-        vx = random.random() * 0.8 + 0.2
-        vy = 1 - vx
-        self.vx, self.vy = vx**0.5, vy**0.5
-        self.vx *= random.randint(0, 1) * 2 - 1
+        self.restart()
 
-    def move(self, speed, screen_width):
+    def move(self, speed):
         self.x += (self.vx + self.spinx) * speed
         self.y += (self.vy + self.spiny) * speed
         if self.spinx != 0:
             if self.spinx > 0:
-                self.spinx -= min(self.spinx, speed / screen_width)
+                self.spinx -= min(self.spinx, speed / self.screen_width / 2)
             elif self.spinx < 0:
-                self.spinx += min(-self.spinx, speed / screen_width)
+                self.spinx += min(-self.spinx, speed / self.screen_width / 2)
         if self.spiny != 0:
             if self.spiny > 0:
-                self.spiny -= min(self.spiny, speed / screen_width)
+                self.spiny -= min(self.spiny, speed / self.screen_width / 2)
             elif self.spiny < 0:
-                self.spiny += min(-self.spiny, speed / screen_width)
+                self.spiny += min(-self.spiny, speed / self.screen_width / 2)
 
     def move_out_collision(self, multiplier):
         self.x += self.vx * multiplier
         self.y += self.vy * multiplier
 
-    def move_out_collision_spin(self, multiplier, screen_width):
+    def move_out_collision_spin(self, multiplier):
         self.x += (self.vx + self.spinx) * multiplier
         self.y += (self.vy + self.spiny) * multiplier
         if self.spinx != 0:
             if self.spinx > 0:
-                self.spinx -= min(self.spinx, multiplier / screen_width)
+                self.spinx -= min(self.spinx, multiplier / self.screen_width / 2)
             elif self.spinx < 0:
-                self.spinx += min(-self.spinx, multiplier / screen_width)
+                self.spinx += min(-self.spinx, multiplier / self.screen_width / 2)
         if self.spiny != 0:
             if self.spiny > 0:
-                self.spiny -= min(self.spiny, multiplier / screen_width)
+                self.spiny -= min(self.spiny, multiplier / self.screen_width / 2)
             elif self.spiny < 0:
-                self.spiny += min(-self.spiny, multiplier / screen_width)
+                self.spiny += min(-self.spiny, multiplier / self.screen_width / 2)
 
-    def collision_red(self, padel: Padel, spin, speed, screen_width):
+    def collision_red(self, padel: Padel, spin, speed):
         if padel.moving_down:
             self.y += speed
         if padel.moving_up:
@@ -97,9 +91,9 @@ class Ball():
                 elif padel.moving_down:
                     self.spiny -= 1
                     self.spinx += 0.5
-            self.move_out_collision_spin(speed + multiplier, screen_width)
+            self.move_out_collision_spin(speed + multiplier)
 
-    def collision_yellow(self, padel: Padel, spin, speed, screen_width):
+    def collision_yellow(self, padel: Padel, spin, speed):
         if padel.moving_down:
             self.y += speed
         if padel.moving_up:
@@ -139,10 +133,10 @@ class Ball():
                 elif padel.moving_down:
                     self.spiny -= 1
                     self.spinx -= 0.5
-            self.move_out_collision_spin(speed + multiplier, screen_width)
+            self.move_out_collision_spin(speed + multiplier)
 
-    def boundary_collision(self, height, TEXT_BAR_HEIGHT):
-        if self.y < TEXT_BAR_HEIGHT + 2 or self.y + self.height > height - 2:
+    def boundary_collision(self, TEXT_BAR_HEIGHT):
+        if self.y < TEXT_BAR_HEIGHT + 2 or self.y + self.height > self.screen_height - 2:
             self.vy *= -1
             self.spiny *= -1
 
@@ -161,15 +155,15 @@ class Ball():
             return True
         return False
 
-    def scored(self, width):
+    def scored(self):
         if self.x < 1:
             return "Yellow"
-        elif self.x + self.width > width:
+        elif self.x + self.width > self.screen_width:
             return "Red"
 
-    def restart(self, width, height):
-        self.x = width / 2 - self.width / 2
-        self.y = random.randint(30, height - self.height - 2)
+    def restart(self):
+        self.x = self.screen_width / 2 - self.width / 2
+        self.y = random.randint(30, self.screen_height - self.height - 2)
         self.spinx = 0
         self.spiny = 0
         self.side_hit = False

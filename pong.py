@@ -107,27 +107,27 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel):
     global variable_speed
     global last_collided
     event = None
-    ball.move(speed, WIDTH // 2)
+    ball.move(speed)
 
     if ball.collide_padel(red):
-        ball.collision_red(red, spin=last_collided != red, speed=speed, screen_width=WIDTH)
+        ball.collision_red(red, spin=last_collided != red, speed=speed)
         if last_collided != red:
             variable_speed *= 1.03
             last_collided = red
             event = "Rally"
 
     elif ball.collide_padel(yellow):
-        ball.collision_yellow(yellow, spin=last_collided != yellow, speed=speed, screen_width=WIDTH)
+        ball.collision_yellow(yellow, spin=last_collided != yellow, speed=speed)
         if last_collided != yellow:
             variable_speed *= 1.03
             last_collided = yellow
             event = "Rally"
 
-    ball.boundary_collision(HEIGHT, TEXT_BAR_HEIGHT)
+    ball.boundary_collision(TEXT_BAR_HEIGHT)
 
-    scored = ball.scored(WIDTH)
-    if ball.scored(WIDTH):
-        ball.restart(WIDTH, HEIGHT)
+    scored = ball.scored()
+    if scored:
+        ball.restart()
         variable_speed = SPEED
         event = scored
         last_collided = None
