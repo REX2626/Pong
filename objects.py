@@ -126,7 +126,7 @@ class Ball():
         elif self.y + self.height > self.screen_height - 2:
             self.vy *= -1
             self.spiny *= -1
-            delta =  (self.y + self.height) - (self.screen_height - 2)
+            delta = (self.y + self.height) - (self.screen_height - 2)
             self.y -= delta
 
     def collides_with_paddle_test(self, padel: Padel):
