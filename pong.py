@@ -123,7 +123,7 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel):
             last_collided = yellow
             event = "Rally"
 
-    ball.boundary_collision(TEXT_BAR_HEIGHT)
+    ball.boundary_collision()
 
     scored = ball.scored()
     if scored:
@@ -146,7 +146,7 @@ def main(red_handle_movement, menu):
     red = Padel(RED_PADEL_X, PADEL_Y, PADEL_WIDTH, PADEL_HEIGHT)
     yellow = Padel(YELLOW_PADEL_X, PADEL_Y, PADEL_WIDTH, PADEL_HEIGHT)
 
-    ball = Ball(WIDTH, HEIGHT, BALL_WIDTH, BALL_HEIGHT)
+    ball = Ball(WIDTH, HEIGHT, BALL_WIDTH, BALL_HEIGHT, TEXT_BAR_HEIGHT)
 
     running = True
     not_paused = True

@@ -12,11 +12,12 @@ class Padel():
 
 
 class Ball():
-    def __init__(self, width, height, ball_width, ball_height) -> None:
+    def __init__(self, width, height, ball_width, ball_height, text_bar_height) -> None:
         self.screen_width = width
         self.screen_height = height
         self.width = ball_width
         self.height = ball_height
+        self.text_bar_height = text_bar_height
         self.restart()
 
     def move(self, speed):
@@ -135,8 +136,8 @@ class Ball():
                     self.spinx -= 0.5
             self.move_out_collision_spin(speed + multiplier)
 
-    def boundary_collision(self, TEXT_BAR_HEIGHT):
-        if self.y < TEXT_BAR_HEIGHT + 2 or self.y + self.height > self.screen_height - 2:
+    def boundary_collision(self):
+        if self.y < self.text_bar_height + 2 or self.y + self.height > self.screen_height - 2:
             self.vy *= -1
             self.spiny *= -1
 
@@ -163,7 +164,7 @@ class Ball():
 
     def restart(self):
         self.x = self.screen_width / 2 - self.width / 2
-        self.y = random.randint(30, self.screen_height - self.height - 2)
+        self.y = random.randint(self.text_bar_height + 2, self.screen_height - self.height - 2)
         self.spinx = 0
         self.spiny = 0
         self.side_hit = False
