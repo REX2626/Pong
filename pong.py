@@ -1,5 +1,3 @@
-# TEST PUSH REQUEST
-
 from time import perf_counter
 import pygame
 from objects import Ball, Padel
