@@ -1,8 +1,9 @@
 from time import perf_counter
 import pygame
-from objects import Ball, Padel
+from objects import Ball, Padel, GameEventType
 import _menu
 import sys
+
 pygame.init()
 
 WIDTH, HEIGHT = 900, 500
@@ -30,7 +31,6 @@ PADEL_SIDE_INDENT = 80
 DASHED_WIDTH = 4
 
 BALL_WIDTH, BALL_HEIGHT = 8, 8
-
 
 def update_screen_size():
     global RED_PADEL_X, YELLOW_PADEL_X, PADEL_Y, DASHED_X, DASHED_LENGTH
@@ -112,7 +112,7 @@ def yellow_handle_movement(keys_pressed, yellow: Padel, speed):
 def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel, speed):
     global variable_speed
     global last_collided
-    event = None
+    game_event = GameEventType.NONE
     ball.move(speed)
 
     if ball.collides_with_paddle_test(red):
@@ -120,14 +120,14 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel, speed):
         if last_collided != red:
             variable_speed *= 1.03
             last_collided = red
-            event = "Rally"
+            game_event = GameEventType.RALLY
 
     elif ball.collides_with_paddle_test(yellow):
         ball.handle_paddle_collisions(yellow, spin=last_collided != yellow)
         if last_collided != yellow:
             variable_speed *= 1.03
             last_collided = yellow
-            event = "Rally"
+            game_event = GameEventType.RALLY
 
     ball.boundary_collision()
 
@@ -135,10 +135,10 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel, speed):
     if scored:
         ball.restart()
         variable_speed = SPEED
-        event = scored
+        game_event = scored
         last_collided = None
     
-    return event
+    return game_event
 
 
 def main(red_handle_movement, menu):
@@ -164,14 +164,14 @@ def main(red_handle_movement, menu):
             red = red_handle_movement(keys_pressed, red, ball, speed)
             yellow = yellow_handle_movement(keys_pressed, yellow, speed)
 
-            event = handle_ball_movement(ball, yellow, red, speed)
-            if event == "Red":
+            game_event = handle_ball_movement(ball, yellow, red, speed)
+            if game_event == GameEventType.RED:
                 red_score += 1
                 rally = 0
-            elif event == "Yellow":
+            elif game_event == GameEventType.YELLOW:
                 yellow_score += 1
                 rally = 0
-            elif event == "Rally":
+            elif game_event == GameEventType.RALLY:
                 rally += 1
 
             draw_window(yellow, red, ball, red_score, yellow_score, rally)

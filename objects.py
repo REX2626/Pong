@@ -1,4 +1,12 @@
 import random
+from enum import Enum
+
+class GameEventType(Enum):
+    NONE = 0
+    RALLY = 1
+    RED = 2
+    YELLOW = 3
+
 
 class Rect():
     def __init__(self, tlx, tly, brx, bry) -> None: #tlx = top left x etc
@@ -126,9 +134,9 @@ class Ball():
 
     def scored(self):
         if self.x < 1:
-            return "Yellow"
+            return GameEventType.YELLOW
         elif self.x + self.width > self.screen_width:
-            return "Red"
+            return GameEventType.RED
     
     def rect(self) -> "Rect":
         return Rect(self.x, self.y, self.x + self.width, self.y + self.height)
