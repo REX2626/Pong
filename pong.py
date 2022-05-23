@@ -13,6 +13,7 @@ SPEED = 230
 variable_speed = SPEED
 last_collided = None
 score_font = pygame.font.SysFont("comicsans", 20)
+TEXT_BAR_HEIGHT = score_font.get_height()
 
 WHITE = (255, 255, 255)
 LIGHT_GREY = (120, 120, 120)
@@ -29,6 +30,7 @@ PADEL_WIDTH, PADEL_HEIGHT = 13, 55
 RED_PADEL_X = 80
 YELLOW_PADEL_X = 820 - PADEL_WIDTH
 PADEL_Y = 250 - PADEL_HEIGHT // 2
+PADEL_INDENT = 10
 
 BALL_WIDTH, BALL_HEIGHT = 8, 8
 
@@ -48,7 +50,7 @@ def draw_dashed_line():
 def draw_window(yellow: pygame.Rect, red: pygame.Rect, ball: Ball, red_score, yellow_score, rally):
     WIN.fill(BLACK)
     draw_dashed_line()
-    pygame.draw.rect(WIN, DARK_GREY, (0, 0, WIDTH, 28))
+    pygame.draw.rect(WIN, DARK_GREY, (0, 0, WIDTH, TEXT_BAR_HEIGHT))
     pygame.draw.rect(WIN, RED, (red.x, red.y, PADEL_WIDTH, PADEL_HEIGHT))
     pygame.draw.rect(WIN, YELLOW, (yellow.x, yellow.y, PADEL_WIDTH, PADEL_HEIGHT))
     pygame.draw.rect(WIN, get_ball_colour(rally), (ball.x, ball.y, ball.width, ball.height))
@@ -57,8 +59,8 @@ def draw_window(yellow: pygame.Rect, red: pygame.Rect, ball: Ball, red_score, ye
     yellow_score_label = score_font.render(f"YELLOW: {yellow_score}", True, WHITE)
     rally_score_label = score_font.render(f"RALLY: {rally}", True, LIGHT_GREY)
 
-    WIN.blit(red_score_label, (10, 0))
-    WIN.blit(yellow_score_label, (WIDTH - yellow_score_label.get_width() - 10, 0))
+    WIN.blit(red_score_label, (PADEL_INDENT, 0))
+    WIN.blit(yellow_score_label, (WIDTH - yellow_score_label.get_width() - PADEL_INDENT, 0))
     WIN.blit(rally_score_label, (WIDTH / 2 - rally_score_label.get_width() / 2, 0))
 
     pygame.display.update()
@@ -67,10 +69,10 @@ def draw_window(yellow: pygame.Rect, red: pygame.Rect, ball: Ball, red_score, ye
 def red_player_movement(keys_pressed, red: Padel, _):
     red.moving_up = False
     red.moving_down = False
-    if keys_pressed[pygame.K_w] and red.y - speed > 38:  # UP
+    if keys_pressed[pygame.K_w] and red.y - speed > TEXT_BAR_HEIGHT + PADEL_INDENT:  # UP
         red.y -= speed
         red.moving_up = True
-    if keys_pressed[pygame.K_s] and red.y + speed + red.height < HEIGHT - 10:  # DOWN
+    if keys_pressed[pygame.K_s] and red.y + speed + red.height < HEIGHT - PADEL_INDENT:  # DOWN
         red.y += speed
         red.moving_down = True
     return red
@@ -79,10 +81,10 @@ def red_player_movement(keys_pressed, red: Padel, _):
 def red_bot_movement(_, red: Padel, ball: Ball):
     red.moving_up = False
     red.moving_down = False
-    if ball.y + ball.height / 2 < red.y + red.height / 2 and red.y - speed > 38: # If ball higher than padel - move up
+    if ball.y + ball.height / 2 < red.y + red.height / 2 and red.y - speed > TEXT_BAR_HEIGHT + PADEL_INDENT: # If ball higher than padel - move up
         red.y -= speed
         red.moving_up = True
-    elif ball.y + ball.height / 2 > red.y + red.height / 2 and red.y + speed + red.height < HEIGHT - 10: # If ball lower than padel - move down
+    elif ball.y + ball.height / 2 > red.y + red.height / 2 and red.y + speed + red.height < HEIGHT - PADEL_INDENT: # If ball lower than padel - move down
         red.y += speed
         red.moving_down = True
     return red
@@ -91,10 +93,10 @@ def red_bot_movement(_, red: Padel, ball: Ball):
 def yellow_handle_movement(keys_pressed, yellow: Padel):
     yellow.moving_up = False
     yellow.moving_down = False
-    if keys_pressed[pygame.K_UP] and yellow.y - speed > 38:  # UP
+    if keys_pressed[pygame.K_UP] and yellow.y - speed > TEXT_BAR_HEIGHT + PADEL_INDENT:  # UP
         yellow.y -= speed
         yellow.moving_up = True
-    if keys_pressed[pygame.K_DOWN] and yellow.y + speed + yellow.height < HEIGHT - 10:  # DOWN
+    if keys_pressed[pygame.K_DOWN] and yellow.y + speed + yellow.height < HEIGHT - PADEL_INDENT:  # DOWN
         yellow.y += speed
         yellow.moving_down = True
     return yellow
@@ -120,7 +122,7 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel):
             last_collided = yellow
             event = "Rally"
 
-    ball.boundary_collision(HEIGHT)
+    ball.boundary_collision(HEIGHT, TEXT_BAR_HEIGHT)
 
     scored = ball.scored(WIDTH)
     if ball.scored(WIDTH):

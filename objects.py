@@ -141,8 +141,8 @@ class Ball():
                     self.spinx -= 0.5
             self.move_out_collision_spin(speed + multiplier, screen_width)
 
-    def boundary_collision(self, height):
-        if self.y < 30 or self.y + self.height > height - 2:
+    def boundary_collision(self, height, TEXT_BAR_HEIGHT):
+        if self.y < TEXT_BAR_HEIGHT + 2 or self.y + self.height > height - 2:
             self.vy *= -1
             self.spiny *= -1
 

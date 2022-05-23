@@ -114,7 +114,7 @@ class Menu():
         pong.PADEL_WIDTH = max(0, min(pong.WIDTH / 2, pong.PADEL_WIDTH + change))
 
     def change_padel_height(self, change):
-        pong.PADEL_HEIGHT = max(0, min(pong.HEIGHT - 30, pong.PADEL_HEIGHT + change))
+        pong.PADEL_HEIGHT = max(0, min(pong.HEIGHT - pong.TEXT_BAR_HEIGHT - 2 * pong.PADEL_INDENT, pong.PADEL_HEIGHT + change))
 
     def main_menu(self):
         self.back_to_menu_button.y = self.screen_height / 2
