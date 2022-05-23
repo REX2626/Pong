@@ -1,3 +1,4 @@
+from time import perf_counter
 import pygame
 import pong
 import sys
@@ -43,6 +44,7 @@ class Menu():
         self.back_to_menu_button.y = self.screen_height * 3 / 4
         self.buttons = [self.back_to_menu_button, self.speed_button, self.ball_size_button]
         self.draw_menu(self.background_colour)
+        keys_down = False
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -60,6 +62,19 @@ class Menu():
 
             if self.setting_chosen:
                 keys_pressed = pygame.key.get_pressed()
+
+                if keys_pressed[pygame.K_UP] or keys_pressed[pygame.K_DOWN]:
+                    if not keys_down:
+                        keys_down = True
+                        key_interval = 0.5
+                        next_time = perf_counter() + key_interval
+                    else:
+                        if perf_counter() < next_time:
+                            continue
+                        key_interval *= (1 - key_interval)
+                        next_time = perf_counter() + key_interval
+                else:
+                    keys_down = False
 
                 if keys_pressed[pygame.K_UP]:
                     self.settings_dict[self.setting_chosen](1)
