@@ -34,7 +34,6 @@ class Menu():
     def mouse_click(self, mouse):
         for button in self.buttons:
             if button.clicked_on(mouse[0], mouse[1]):
-                self.buttons = []
                 button.function()
 
     def draw_menu(self, colour=None):
@@ -68,6 +67,9 @@ class Menu():
                         self.setting_chosen = None
                     self.mouse_click(mouse)
 
+                elif event.type == pygame.KEYDOWN and event.__dict__["key"] == pygame.K_ESCAPE:
+                    self.main_menu()
+
             if self.setting_chosen:
                 keys_pressed = pygame.key.get_pressed()
 
@@ -95,7 +97,6 @@ class Menu():
                     self.draw_menu(self.background_colour)
 
     def chosen_setting(self, setting):
-        self.buttons = [self.back_to_menu_button] + [*self.settings_dict.keys()]
         setting.outline = pong.LIGHT_GREY
         setting.draw()
         self.draw_menu()
