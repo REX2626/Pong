@@ -77,14 +77,14 @@ class Ball():
         self.y += (self.vy + self.spiny) * speed
 
         if self.spinx > 0:
-            self.spinx -= min(self.spinx, speed / self.screen_width / 2)
+            self.spinx -= min(self.spinx, speed / self.screen_width)
         elif self.spinx < 0:
-            self.spinx += min(-self.spinx, speed / self.screen_width / 2)
+            self.spinx += min(-self.spinx, speed / self.screen_width)
 
         if self.spiny > 0:
-            self.spiny -= min(self.spiny, speed / self.screen_width / 2)
+            self.spiny -= min(self.spiny, 2 * speed / self.screen_width)
         elif self.spiny < 0:
-            self.spiny += min(-self.spiny, speed / self.screen_width / 2)
+            self.spiny += min(-self.spiny, 2 * speed / self.screen_width)
 
     def handle_paddle_collisions(self, padel: Padel, spin: "bool"):
         sr = self.rect()
