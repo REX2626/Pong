@@ -1,11 +1,14 @@
 import random
 from enum import Enum
 
+
+
 class GameEventType(Enum):
     NONE = 0
     RALLY = 1
     RED = 2
     YELLOW = 3
+
 
 
 class Rect():
@@ -46,6 +49,7 @@ def sign(x):
     return -1
 
 
+
 class Padel():
     def __init__(self, x, y, width, height) -> None:
         self.x = x
@@ -71,16 +75,16 @@ class Ball():
     def move(self, speed):
         self.x += (self.vx + self.spinx) * speed
         self.y += (self.vy + self.spiny) * speed
-        if self.spinx != 0:
-            if self.spinx > 0:
-                self.spinx -= min(self.spinx, speed / self.screen_width / 2)
-            elif self.spinx < 0:
-                self.spinx += min(-self.spinx, speed / self.screen_width / 2)
-        if self.spiny != 0:
-            if self.spiny > 0:
-                self.spiny -= min(self.spiny, speed / self.screen_width / 2)
-            elif self.spiny < 0:
-                self.spiny += min(-self.spiny, speed / self.screen_width / 2)
+
+        if self.spinx > 0:
+            self.spinx -= min(self.spinx, speed / self.screen_width / 2)
+        elif self.spinx < 0:
+            self.spinx += min(-self.spinx, speed / self.screen_width / 2)
+
+        if self.spiny > 0:
+            self.spiny -= min(self.spiny, speed / self.screen_width / 2)
+        elif self.spiny < 0:
+            self.spiny += min(-self.spiny, speed / self.screen_width / 2)
 
     def handle_paddle_collisions(self, padel: Padel, spin: "bool"):
         sr = self.rect()
