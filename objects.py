@@ -6,7 +6,7 @@ class GameEventType(Enum):
     RALLY = 1
     RED = 2
     YELLOW = 3
-# test commit
+
 
 class Rect():
     def __init__(self, tlx, tly, brx, bry) -> None: #tlx = top left x etc
