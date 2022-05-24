@@ -123,6 +123,8 @@ class Menu():
             button.update()
         pong.update_screen_size()
         pygame.display.set_mode((pong.WIDTH, pong.HEIGHT))
+        pong.FULLSCREEN = False
+        self.fullscreen_button.update_text()
 
     def change_screen_height(self, change):
         pong.HEIGHT = max(0, pong.HEIGHT + change)
@@ -130,6 +132,8 @@ class Menu():
             button.update()
         pong.update_screen_size()
         pygame.display.set_mode((pong.WIDTH, pong.HEIGHT))
+        pong.FULLSCREEN = False
+        self.fullscreen_button.update_text()
 
     def change_speed(self, change):
         pong.SPEED = max(0, pong.SPEED + change)
@@ -161,6 +165,8 @@ class Menu():
             for button in self.all_buttons:
                 button.update()
             pong.update_screen_size()
+        self.screen_width_button.update_text()
+        self.screen_height_button.update_text()
 
     def main_menu(self):
         self.back_to_menu_button.get_y = lambda: pong.HEIGHT / 2
