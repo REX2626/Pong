@@ -128,8 +128,8 @@ class Menu():
         pong.variable_speed = max(0, pong.variable_speed + change)
 
     def change_ball_size(self, change):
-        pong.BALL_HEIGHT = max(0, min(min(pong.WIDTH, pong.HEIGHT - 32), pong.BALL_HEIGHT + change))
-        pong.BALL_WIDTH = max(0, min(min(pong.WIDTH, pong.HEIGHT - 32), pong.BALL_WIDTH + change))
+        pong.BALL_HEIGHT = max(0, min(min(pong.WIDTH - 2 * (pong.PADEL_SIDE_INDENT + pong.PADEL_WIDTH), pong.HEIGHT - pong.TEXT_BAR_HEIGHT - 4), pong.BALL_HEIGHT + change))
+        pong.BALL_WIDTH = max(0, min(min(pong.WIDTH - 2 * (pong.PADEL_SIDE_INDENT + pong.PADEL_WIDTH), pong.HEIGHT - pong.TEXT_BAR_HEIGHT - 4), pong.BALL_WIDTH + change))
 
     def change_padel_width(self, change):
         pong.PADEL_WIDTH = max(0, min(pong.WIDTH - pong.PADEL_SIDE_INDENT * 2, pong.PADEL_WIDTH + change))
