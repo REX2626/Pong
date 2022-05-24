@@ -74,6 +74,7 @@ class Menu():
                     self.mouse_click(mouse)
 
                 elif event.type == pygame.KEYDOWN and event.__dict__["key"] == pygame.K_ESCAPE:
+                    self.setting_chosen = None
                     self.main_menu()
 
             if self.setting_chosen:
