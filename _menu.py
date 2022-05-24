@@ -11,10 +11,11 @@ class Menu():
         self.box_colour = pong.MEDIUM_GREY
         self.setting_chosen = None
 
-        self.singleplayer_button =         Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 4    , lambda: pong.main(pong.red_bot_movement, self)        , "SINGLE PLAYER", pong.WHITE, self.box_colour, "comicsans", 40)
-        self.multiplayer_button =          Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 2    , lambda: pong.main(pong.red_player_movement, self)     , "MULTIPLAYER"  , pong.WHITE, self.box_colour, "comicsans", 40)
+        self.singleplayer_button =         Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 5    , lambda: pong.main(pong.red_bot_movement, self)        , "SINGLE PLAYER", pong.WHITE, self.box_colour, "comicsans", 40)
+        self.multiplayer_button =          Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT * 2 / 5, lambda: pong.main(pong.red_player_movement, self)     , "MULTIPLAYER"  , pong.WHITE, self.box_colour, "comicsans", 40)
+        self.settings_button =             Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT * 3 / 5, self.settings                                         , "SETTINGS"     , pong.WHITE, self.box_colour, "comicsans", 40)
+        self.quit_button =                 Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT * 4 / 5, self.quit                                             , "QUIT"         , pong.WHITE, self.box_colour, "comicsans", 40)
 
-        self.settings_button =             Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT * 3 / 4, self.settings                                         , "SETTINGS"     , pong.WHITE, self.box_colour, "comicsans", 40)
         self.screen_width_button =  SettingButton(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 8    , lambda: self.chosen_setting(self.screen_width_button) , lambda: f"SCREEN WIDTH: {pong.WIDTH}"       , pong.WHITE, self.box_colour, "comicsans", 40)
         self.screen_height_button = SettingButton(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 4    , lambda: self.chosen_setting(self.screen_height_button), lambda: f"SCREEN HEIGHT: {pong.HEIGHT}"     , pong.WHITE, self.box_colour, "comicsans", 40)
         self.speed_button =         SettingButton(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT * 3 / 8, lambda: self.chosen_setting(self.speed_button)        , lambda: f"SPEED: {pong.SPEED}"              , pong.WHITE, self.box_colour, "comicsans", 40)
@@ -33,7 +34,7 @@ class Menu():
 
         self.back_to_menu_button = Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 2, lambda: self.main_menu(), "MAIN MENU", pong.WHITE, self.box_colour, "comicsans", 40)
 
-        self.buttons = [self.singleplayer_button, self.multiplayer_button, self.settings_button]
+        self.buttons = [self.singleplayer_button, self.multiplayer_button, self.settings_button, self.quit_button]
         self.all_buttons = [*self.settings_dict.keys()] + self.buttons + [self.back_to_menu_button]
 
     def mouse_click(self, mouse):
@@ -52,6 +53,10 @@ class Menu():
         self.buttons = [self.back_to_menu_button]
         self.draw_menu()
 
+    def quit(self):
+        pygame.quit()
+        sys.exit()
+
     def settings(self):
         self.back_to_menu_button.get_y = lambda: pong.HEIGHT * 7 / 8
         self.back_to_menu_button.update()
@@ -61,8 +66,7 @@ class Menu():
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+                    self.quit()
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse = pygame.mouse.get_pos()
@@ -143,11 +147,11 @@ class Menu():
     def main_menu(self):
         self.back_to_menu_button.get_y = lambda: pong.HEIGHT / 2
         self.back_to_menu_button.update()
-        self.buttons = [self.singleplayer_button, self.multiplayer_button, self.settings_button]
+        self.buttons = [self.singleplayer_button, self.multiplayer_button, self.settings_button, self.quit_button]
         self.draw_menu(self.background_colour)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
+                self.quit()
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse = pygame.mouse.get_pos()
