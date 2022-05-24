@@ -133,9 +133,9 @@ class Ball():
         return self.rect().intersects_other_rect(padel.rect())        
 
     def scored(self):
-        if self.x < 1:
+        if self.x + self.width < 1:
             return GameEventType.YELLOW
-        elif self.x + self.width > self.screen_width:
+        elif self.x > self.screen_width:
             return GameEventType.RED
     
     def rect(self) -> "Rect":
