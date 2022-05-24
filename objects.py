@@ -114,7 +114,7 @@ class Ball():
         else: # "side" (vertical) bounce
             self.vy *= -1 # invert y vel
             if not self.ball_has_hit_side: # make sure only increasing vy once, otherwise vy could increase exponentially
-                self.vy *= -2 # multiply by 2 to make the effect more visible
+                self.vy *= 2 # multiply by 2 to make the effect more visible
                 self.ball_has_hit_side = True
             self.spiny = 0 # to avoid bouncing back into the paddle
             # shift to the inverse of the intersection vector to escape collision
