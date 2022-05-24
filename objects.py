@@ -112,7 +112,10 @@ class Ball():
                     self.spinx += 0.5*sign(self.vx)
 
         else: # "side" (vertical) bounce
-            self.vy *= -2 # invert y vel, and multiply by 2 to make the effect more visible
+            self.vy *= -1 # invert y vel
+            if not self.ball_has_hit_side: # make sure only increasing vy once, otherwise vy could increase exponentially
+                self.vy *= -2 # multiply by 2 to make the effect more visible
+                self.ball_has_hit_side = True
             self.spiny = 0 # to avoid bouncing back into the paddle
             # shift to the inverse of the intersection vector to escape collision
             self.y -= intersection_vector[1]
@@ -150,3 +153,4 @@ class Ball():
         vy = 1 - vx
         self.vx, self.vy = vx**0.5, vy**0.5
         self.vx *= random.randint(0, 1) * 2 - 1
+        self.ball_has_hit_side = False
