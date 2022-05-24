@@ -117,7 +117,7 @@ class Ball():
 
         else: # "side" (vertical) bounce
             self.vy *= -1 # invert y vel
-            if not self.ball_has_hit_side: # make sure only increasing vy once, otherwise vy could increase exponentially
+            if not self.ball_has_hit_side and (padel.moving_down or padel.moving_up): # make sure only increasing vy once, otherwise vy could increase exponentially
                 self.vy *= 2 # multiply by 2 to make the effect more visible
                 self.ball_has_hit_side = True
             self.spiny = 0 # to avoid bouncing back into the paddle
