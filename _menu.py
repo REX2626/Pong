@@ -16,12 +16,13 @@ class Menu():
         self.settings_button =             Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT * 3 / 5, self.settings                                         , "SETTINGS"     , pong.WHITE, self.box_colour, "comicsans", 40)
         self.quit_button =                 Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT * 4 / 5, self.quit                                             , "QUIT"         , pong.WHITE, self.box_colour, "comicsans", 40)
 
-        self.screen_width_button =  SettingButton(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 8    , lambda: self.chosen_setting(self.screen_width_button) , lambda: f"SCREEN WIDTH: {pong.WIDTH}"       , pong.WHITE, self.box_colour, "comicsans", 40)
-        self.screen_height_button = SettingButton(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 4    , lambda: self.chosen_setting(self.screen_height_button), lambda: f"SCREEN HEIGHT: {pong.HEIGHT}"     , pong.WHITE, self.box_colour, "comicsans", 40)
-        self.speed_button =         SettingButton(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT * 3 / 8, lambda: self.chosen_setting(self.speed_button)        , lambda: f"SPEED: {pong.SPEED}"              , pong.WHITE, self.box_colour, "comicsans", 40)
-        self.ball_size_button =     SettingButton(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 2    , lambda: self.chosen_setting(self.ball_size_button)    , lambda: f"BALL SIZE: {pong.BALL_WIDTH}"     , pong.WHITE, self.box_colour, "comicsans", 40)
-        self.padel_width_button =   SettingButton(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT * 5 / 8, lambda: self.chosen_setting(self.padel_width_button)  , lambda: f"PADEL WIDTH: {pong.PADEL_WIDTH}"  , pong.WHITE, self.box_colour, "comicsans", 40)
-        self.padel_height_button =  SettingButton(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT * 3 / 4, lambda: self.chosen_setting(self.padel_height_button) , lambda: f"PADEL HEIGHT: {pong.PADEL_HEIGHT}", pong.WHITE, self.box_colour, "comicsans", 40)
+        self.screen_width_button =  SettingButton(lambda: pong.WIDTH / 4    , lambda: pong.HEIGHT / 6    , lambda: self.chosen_setting(self.screen_width_button) , lambda: f"SCREEN WIDTH: {pong.WIDTH}"       , pong.WHITE, self.box_colour, "comicsans", 40)
+        self.screen_height_button = SettingButton(lambda: pong.WIDTH / 4 * 3, lambda: pong.HEIGHT / 6    , lambda: self.chosen_setting(self.screen_height_button), lambda: f"SCREEN HEIGHT: {pong.HEIGHT}"     , pong.WHITE, self.box_colour, "comicsans", 40)
+        self.speed_button =         SettingButton(lambda: pong.WIDTH / 4    , lambda: pong.HEIGHT / 6 * 2, lambda: self.chosen_setting(self.speed_button)        , lambda: f"SPEED: {pong.SPEED}"              , pong.WHITE, self.box_colour, "comicsans", 40)
+        self.ball_size_button =     SettingButton(lambda: pong.WIDTH / 4 * 3, lambda: pong.HEIGHT / 6 * 2, lambda: self.chosen_setting(self.ball_size_button)    , lambda: f"BALL SIZE: {pong.BALL_WIDTH}"     , pong.WHITE, self.box_colour, "comicsans", 40)
+        self.padel_width_button =   SettingButton(lambda: pong.WIDTH / 4    , lambda: pong.HEIGHT / 6 * 3, lambda: self.chosen_setting(self.padel_width_button)  , lambda: f"PADEL WIDTH: {pong.PADEL_WIDTH}"  , pong.WHITE, self.box_colour, "comicsans", 40)
+        self.padel_height_button =  SettingButton(lambda: pong.WIDTH / 4 * 3, lambda: pong.HEIGHT / 6 * 3, lambda: self.chosen_setting(self.padel_height_button) , lambda: f"PADEL HEIGHT: {pong.PADEL_HEIGHT}", pong.WHITE, self.box_colour, "comicsans", 40)
+        self.fullscreen_button =    SettingButton(lambda: pong.WIDTH / 2,     lambda: pong.HEIGHT / 6 * 4, lambda: self.chosen_setting(self.fullscreen_button)   , lambda: f"FULL SCREEN: {pong.FULLSCREEN}"   , pong.WHITE, self.box_colour, "comicsans", 40)
 
         self.settings_dict = {
             self.screen_width_button:  self.change_screen_width,
@@ -29,7 +30,8 @@ class Menu():
             self.speed_button:         self.change_speed,
             self.ball_size_button:     self.change_ball_size,
             self.padel_width_button:   self.change_padel_width,
-            self.padel_height_button:  self.change_padel_height
+            self.padel_height_button:  self.change_padel_height,
+            self.fullscreen_button:    self.change_fullscreen
         }
 
         self.back_to_menu_button = Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 2, lambda: self.main_menu(), "MAIN MENU", pong.WHITE, self.box_colour, "comicsans", 40)
@@ -58,7 +60,7 @@ class Menu():
         sys.exit()
 
     def settings(self):
-        self.back_to_menu_button.get_y = lambda: pong.HEIGHT * 7 / 8
+        self.back_to_menu_button.get_y = lambda: pong.HEIGHT / 6 * 5
         self.back_to_menu_button.update()
         self.buttons = [*self.settings_dict.keys()] + [self.back_to_menu_button]
         self.draw_menu(self.background_colour)
@@ -143,6 +145,22 @@ class Menu():
 
     def change_padel_height(self, change):
         pong.PADEL_HEIGHT = max(0, min(pong.HEIGHT - pong.TEXT_BAR_HEIGHT - 2 * pong.PADEL_INDENT, pong.PADEL_HEIGHT + change))
+
+    def change_fullscreen(self, _):
+        if pong.FULLSCREEN:
+            pong.FULLSCREEN = False
+            pygame.display.set_mode((900, 500))
+            pong.WIDTH, pong.HEIGHT = 900, 500
+            for button in self.all_buttons:
+                button.update()
+            pong.update_screen_size()
+        else:
+            pong.FULLSCREEN = True
+            pygame.display.set_mode(flags=pygame.FULLSCREEN)
+            pong.WIDTH, pong.HEIGHT = pong.WIN.get_size()
+            for button in self.all_buttons:
+                button.update()
+            pong.update_screen_size()
 
     def main_menu(self):
         self.back_to_menu_button.get_y = lambda: pong.HEIGHT / 2

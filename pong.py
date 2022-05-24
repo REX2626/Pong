@@ -9,6 +9,7 @@ pygame.init()
 WIDTH, HEIGHT = 900, 500
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("GamingX Pong")
+FULLSCREEN = False
 
 SPEED = 230
 variable_speed = SPEED
