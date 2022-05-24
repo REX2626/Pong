@@ -113,7 +113,7 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel, speed):
     ball.move(speed)
 
     for paddle in (red, yellow):
-        if ball.collides_with_paddle_test(paddle):
+        if ball.collides_with_paddle_check(paddle):
             ball.handle_paddle_collisions(paddle, spin=last_collided != paddle)
             if last_collided != paddle:
                 variable_speed *= 1.03

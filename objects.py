@@ -18,7 +18,7 @@ class Rect():
         self.brx = brx
         self.bry = bry
 
-    def intersects_other_rect(self, other: "Rect") -> "bool":
+    def intersects_other_rect(self, other: "Rect") -> bool:
         if self.tlx > other.brx: return False # to the right
         if self.brx < other.tlx: return False # to the left
         if self.tly > other.bry: return False # below
@@ -59,7 +59,7 @@ class Padel():
         self.moving_down = False
         self.moving_up = False
 
-    def rect(self) -> "Rect":
+    def rect(self) -> Rect:
         return Rect(self.x, self.y, self.x + self.width, self.y + self.height)
 
 
@@ -86,7 +86,7 @@ class Ball():
         elif self.spiny < 0:
             self.spiny += min(-self.spiny, 2 * speed / self.screen_width)
 
-    def handle_paddle_collisions(self, padel: Padel, spin: "bool"):
+    def handle_paddle_collisions(self, padel: Padel, spin: bool):
         sr = self.rect()
         pr = padel.rect()
         collides_with_padel = sr.intersects_other_rect(pr) # check we do have a collision
@@ -136,7 +136,7 @@ class Ball():
             delta = (self.y + self.height) - (self.screen_height - 2)
             self.y -= delta
 
-    def collides_with_paddle_test(self, padel: Padel):
+    def collides_with_paddle_check(self, padel: Padel):
         return self.rect().intersects_other_rect(padel.rect())        
 
     def scored(self):
@@ -145,7 +145,7 @@ class Ball():
         elif self.x > self.screen_width:
             return GameEventType.RED
     
-    def rect(self) -> "Rect":
+    def rect(self) -> Rect:
         return Rect(self.x, self.y, self.x + self.width, self.y + self.height)
 
     def restart(self):
