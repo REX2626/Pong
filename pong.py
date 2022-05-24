@@ -48,12 +48,9 @@ def get_ball_colour(rally):
 
 
 def draw_dashed_line():
-    pygame.draw.rect(WIN, WHITE, (DASHED_X, TEXT_BAR_HEIGHT + PADEL_INDENT, DASHED_WIDTH, DASHED_LENGTH))
-    pygame.draw.rect(WIN, WHITE, (DASHED_X, TEXT_BAR_HEIGHT + PADEL_INDENT + 2 * DASHED_LENGTH, DASHED_WIDTH, DASHED_LENGTH))
-    pygame.draw.rect(WIN, WHITE, (DASHED_X, TEXT_BAR_HEIGHT + PADEL_INDENT + 4 * DASHED_LENGTH, DASHED_WIDTH, DASHED_LENGTH))
-    pygame.draw.rect(WIN, WHITE, (DASHED_X, TEXT_BAR_HEIGHT + PADEL_INDENT + 6 * DASHED_LENGTH, DASHED_WIDTH, DASHED_LENGTH))
-    pygame.draw.rect(WIN, WHITE, (DASHED_X, TEXT_BAR_HEIGHT + PADEL_INDENT + 8 * DASHED_LENGTH, DASHED_WIDTH, DASHED_LENGTH))
-
+    for i in range(0, 10, 2):
+        pygame.draw.rect(WIN, WHITE, (DASHED_X, TEXT_BAR_HEIGHT + PADEL_INDENT + i*DASHED_LENGTH, DASHED_WIDTH, DASHED_LENGTH))
+    
 def draw_window(yellow: pygame.Rect, red: pygame.Rect, ball: Ball, red_score, yellow_score, rally):
     WIN.fill(BLACK)
     draw_dashed_line()
@@ -115,19 +112,13 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel, speed):
     game_event = GameEventType.NONE
     ball.move(speed)
 
-    if ball.collides_with_paddle_test(red):
-        ball.handle_paddle_collisions(red, spin=last_collided != red)
-        if last_collided != red:
-            variable_speed *= 1.03
-            last_collided = red
-            game_event = GameEventType.RALLY
-
-    elif ball.collides_with_paddle_test(yellow):
-        ball.handle_paddle_collisions(yellow, spin=last_collided != yellow)
-        if last_collided != yellow:
-            variable_speed *= 1.03
-            last_collided = yellow
-            game_event = GameEventType.RALLY
+    for paddle in (red, yellow):
+        if ball.collides_with_paddle_test(paddle):
+            ball.handle_paddle_collisions(paddle, spin=last_collided != paddle)
+            if last_collided != paddle:
+                variable_speed *= 1.03
+                last_collided = paddle
+                game_event = GameEventType.RALLY
 
     ball.boundary_collision()
 
