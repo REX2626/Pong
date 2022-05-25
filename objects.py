@@ -38,9 +38,6 @@ class Rect():
         return (self.brx, self.bry)
 
 
-def add_points(point_a: "tuple(float, float)", point_b: "tuple(float, float)") -> "tuple(float, float)":
-    return tuple(point_a[i] + point_b[i] for i in (0, 1))
-
 def sub_points(point_a: "tuple(float, float)", point_b: "tuple(float, float)") -> "tuple(float, float)":
     return tuple(point_a[i] - point_b[i] for i in (0, 1))
 
