@@ -1,4 +1,4 @@
-Pong v2
+Pong v3
 Made by Rex Attwood and Freddie Weir
 © GamingX
 
