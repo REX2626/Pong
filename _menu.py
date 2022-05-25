@@ -233,7 +233,7 @@ class Button():
 
     def draw(self):
         pygame.draw.rect(pong.WIN, self.colour, (round(self.x), round(self.y), self.width, self.height))
-        pygame.draw.rect(pong.WIN, self.outline, (round(self.x), round(self.y), self.width, self.height), width=3)
+        pygame.draw.rect(pong.WIN, self.outline, (round(self.x), round(self.y), self.width, self.height), width=round(pong.WIDTH/300))
         pong.WIN.blit(self.label, (round(self.x + (self.width - self.label.get_width()) / 2), round(self.y)))
 
 
