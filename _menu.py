@@ -33,19 +33,20 @@ class Menu():
             self.padel_height_button:  self.change_padel_height,
             self.fullscreen_button:    self.change_fullscreen
         }
-        
+
         for button in self.settings_dict:
-            button.update_size(max(self.settings_dict, key=lambda button: button.width))
+            button.uniform_size(self.settings_dict)
 
         self.back_to_menu_button = Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 2, lambda: self.main_menu(), "MAIN MENU", pong.WHITE, self.box_colour, "comicsans", 40)
 
         self.buttons = [self.singleplayer_button, self.multiplayer_button, self.settings_button, self.quit_button]
-        self.all_buttons: list[SettingButton] = [*self.settings_dict.keys()] + self.buttons + [self.back_to_menu_button]
+        self.all_buttons: list[Button, SettingButton] = [*self.settings_dict.keys()] + self.buttons + [self.back_to_menu_button]
 
     def mouse_click(self, mouse):
         for button in self.buttons:
             if button.clicked_on(mouse[0], mouse[1]):
                 button.function()
+                return True
 
     def draw_menu(self, colour=None):
         if colour:
@@ -62,6 +63,16 @@ class Menu():
         pygame.quit()
         sys.exit()
 
+    def resize(self):
+        pong.WIDTH, pong.HEIGHT = pygame.display.get_window_size()
+        for button in self.all_buttons:
+            button.resize_text()
+            button.update()
+        for setting_button in self.settings_dict:
+            setting_button.uniform_size(self.settings_dict)
+        pong.update_screen_size()
+        self.draw_menu(self.background_colour)
+
     def settings(self):
         self.back_to_menu_button.get_y = lambda: pong.HEIGHT / 6 * 5
         self.back_to_menu_button.update()
@@ -72,6 +83,9 @@ class Menu():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.quit()
+
+                elif event.type == pygame.WINDOWSIZECHANGED:
+                    self.resize()
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse = pygame.mouse.get_pos()
@@ -108,14 +122,14 @@ class Menu():
                     self.settings_dict[self.setting_chosen](+1)
                     self.setting_chosen.update_text()
                     for button in self.settings_dict:
-                        button.update_size(max(self.settings_dict, key=lambda button: button.width))
+                        button.uniform_size(self.settings_dict)
                     self.draw_menu(self.background_colour)
 
                 if keys_pressed[pygame.K_DOWN]:
                     self.settings_dict[self.setting_chosen](-1)
                     self.setting_chosen.update_text()
                     for button in self.settings_dict:
-                        button.update_size(max(self.settings_dict, key=lambda button: button.width))
+                        button.uniform_size(self.settings_dict)
                     self.draw_menu(self.background_colour)
 
     def chosen_setting(self, setting: "SettingButton"):
@@ -129,7 +143,7 @@ class Menu():
         for button in self.all_buttons:
             button.update()
         pong.update_screen_size()
-        pygame.display.set_mode((pong.WIDTH, pong.HEIGHT))
+        pygame.display.set_mode((pong.WIDTH, pong.HEIGHT), flags=pygame.RESIZABLE)
         pong.FULLSCREEN = False
         self.fullscreen_button.update_text()
 
@@ -138,7 +152,7 @@ class Menu():
         for button in self.all_buttons:
             button.update()
         pong.update_screen_size()
-        pygame.display.set_mode((pong.WIDTH, pong.HEIGHT))
+        pygame.display.set_mode((pong.WIDTH, pong.HEIGHT), flags=pygame.RESIZABLE)
         pong.FULLSCREEN = False
         self.fullscreen_button.update_text()
 
@@ -160,20 +174,10 @@ class Menu():
     def change_fullscreen(self, _):
         if pong.FULLSCREEN:
             pong.FULLSCREEN = False
-            pygame.display.set_mode((900, 500))
-            pong.WIDTH, pong.HEIGHT = 900, 500
-            for button in self.all_buttons:
-                button.update()
-            pong.update_screen_size()
+            pygame.display.set_mode((900, 500), flags=pygame.RESIZABLE)
         else:
             pong.FULLSCREEN = True
-            pygame.display.set_mode(flags=pygame.FULLSCREEN)
-            pong.WIDTH, pong.HEIGHT = pong.WIN.get_size()
-            for button in self.all_buttons:
-                button.update()
-            pong.update_screen_size()
-        self.screen_width_button.update_text()
-        self.screen_height_button.update_text()
+            pygame.display.set_mode(flags=pygame.FULLSCREEN+pygame.RESIZABLE)
 
     def main_menu(self):
         self.back_to_menu_button.get_y = lambda: pong.HEIGHT / 2
@@ -184,6 +188,9 @@ class Menu():
             if event.type == pygame.QUIT:
                 self.quit()
 
+            elif event.type == pygame.VIDEORESIZE:
+                self.resize()
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse = pygame.mouse.get_pos()
                 self.mouse_click(mouse)
@@ -193,10 +200,13 @@ class Menu():
 class Button():
     def __init__(self, get_x, get_y, function, text, text_colour, colour, font, font_size) -> None:
         self.function = function
+        self.text = text
         self.text_colour = text_colour
         self.colour = colour
         self.outline = colour
         self.font = pygame.font.SysFont(font, font_size)
+        self.font_type = font
+        self.font_size = pong.WIDTH / font_size
         self.label = self.font.render(text, True, text_colour)
         self.width = self.label.get_width()
         self.height = self.label.get_height()
@@ -215,6 +225,12 @@ class Button():
         self.x = self.get_x() - self.width / 2
         self.y = self.get_y() - self.height / 2
 
+    def resize_text(self):
+        self.font = pygame.font.SysFont(self.font_type, round(pong.WIDTH / self.font_size))
+        self.label = self.font.render(self.text, True, self.text_colour)
+        self.width = self.label.get_width()
+        self.height = self.label.get_height()
+
     def draw(self):
         pygame.draw.rect(pong.WIN, self.colour, (round(self.x), round(self.y), self.width, self.height))
         pygame.draw.rect(pong.WIN, self.outline, (round(self.x), round(self.y), self.width, self.height), width=3)
@@ -231,6 +247,12 @@ class SettingButton(Button):
         self.label = self.font.render(self.get_text(), True, self.text_colour)
         self.width = self.label.get_width()
 
-    def update_size(self, biggest: Button):
-        self.width = biggest.width
+    def resize_text(self):
+        self.font = pygame.font.SysFont(self.font_type, round(pong.WIDTH / self.font_size))
+        self.label = self.font.render(self.get_text(), True, self.text_colour)
+        self.width = self.label.get_width()
+        self.height = self.label.get_height()
+
+    def uniform_size(self, settings_dict: dict["SettingButton"]):
+        self.width = max(settings_dict, key=lambda button: button.width).width
         self.update()
