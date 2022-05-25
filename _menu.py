@@ -33,11 +33,14 @@ class Menu():
             self.padel_height_button:  self.change_padel_height,
             self.fullscreen_button:    self.change_fullscreen
         }
+        
+        for button in self.settings_dict:
+            button.update_size(max(self.settings_dict, key=lambda button: button.width))
 
         self.back_to_menu_button = Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 2, lambda: self.main_menu(), "MAIN MENU", pong.WHITE, self.box_colour, "comicsans", 40)
 
         self.buttons = [self.singleplayer_button, self.multiplayer_button, self.settings_button, self.quit_button]
-        self.all_buttons = [*self.settings_dict.keys()] + self.buttons + [self.back_to_menu_button]
+        self.all_buttons: list[SettingButton] = [*self.settings_dict.keys()] + self.buttons + [self.back_to_menu_button]
 
     def mouse_click(self, mouse):
         for button in self.buttons:
@@ -104,14 +107,18 @@ class Menu():
                 if keys_pressed[pygame.K_UP]:
                     self.settings_dict[self.setting_chosen](+1)
                     self.setting_chosen.update_text()
+                    for button in self.settings_dict:
+                        button.update_size(max(self.settings_dict, key=lambda button: button.width))
                     self.draw_menu(self.background_colour)
 
                 if keys_pressed[pygame.K_DOWN]:
                     self.settings_dict[self.setting_chosen](-1)
                     self.setting_chosen.update_text()
+                    for button in self.settings_dict:
+                        button.update_size(max(self.settings_dict, key=lambda button: button.width))
                     self.draw_menu(self.background_colour)
 
-    def chosen_setting(self, setting):
+    def chosen_setting(self, setting: "SettingButton"):
         setting.outline = pong.LIGHT_GREY
         setting.draw()
         self.draw_menu()
@@ -211,7 +218,7 @@ class Button():
     def draw(self):
         pygame.draw.rect(pong.WIN, self.colour, (round(self.x), round(self.y), self.width, self.height))
         pygame.draw.rect(pong.WIN, self.outline, (round(self.x), round(self.y), self.width, self.height), width=3)
-        pong.WIN.blit(self.label, (self.x, self.y))
+        pong.WIN.blit(self.label, (round(self.x + (self.width - self.label.get_width()) / 2), round(self.y)))
 
 
 
@@ -223,3 +230,7 @@ class SettingButton(Button):
     def update_text(self):
         self.label = self.font.render(self.get_text(), True, self.text_colour)
         self.width = self.label.get_width()
+
+    def update_size(self, biggest: Button):
+        self.width = biggest.width
+        self.update()

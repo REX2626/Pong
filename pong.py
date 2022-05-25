@@ -133,7 +133,7 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel, speed):
     return game_event
 
 
-def main(red_handle_movement, menu):
+def main(red_handle_movement, menu: "_menu.Menu"):
     delta_time = 0
 
     red_score = 0
