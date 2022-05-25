@@ -51,7 +51,7 @@ def sign(x):
 
 
 class Padel():
-    def __init__(self, x, y, width, height) -> None:
+    def __init__(self, x: float, y: float, width: float, height: float) -> None:
         self.x = x
         self.y = y
         self.width = width
@@ -64,7 +64,7 @@ class Padel():
 
 
 class Ball():
-    def __init__(self, width, height, ball_width, ball_height, text_bar_height) -> None:
+    def __init__(self, width: int, height: int, ball_width: int, ball_height: int, text_bar_height: int) -> None:
         self.screen_width = width
         self.screen_height = height
         self.width = ball_width

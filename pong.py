@@ -38,7 +38,7 @@ def update_screen_size():
     RED_PADEL_X = PADEL_SIDE_INDENT
     YELLOW_PADEL_X = WIDTH - PADEL_SIDE_INDENT - PADEL_WIDTH
     PADEL_Y = TEXT_BAR_HEIGHT + (HEIGHT - TEXT_BAR_HEIGHT) / 2 - PADEL_HEIGHT / 2
-    DASHED_X = WIDTH / 2 - DASHED_WIDTH / 2
+    DASHED_X = round(WIDTH / 2 - DASHED_WIDTH / 2)
     DASHED_LENGTH = (HEIGHT - TEXT_BAR_HEIGHT - 2 * PADEL_INDENT) / 9
 
 update_screen_size()
@@ -50,15 +50,15 @@ def get_ball_colour(rally):
 
 def draw_dashed_line():
     for i in range(0, 10, 2):
-        pygame.draw.rect(WIN, WHITE, (DASHED_X, TEXT_BAR_HEIGHT + PADEL_INDENT + i*DASHED_LENGTH, DASHED_WIDTH, DASHED_LENGTH))
+        pygame.draw.rect(WIN, WHITE, (DASHED_X, round(TEXT_BAR_HEIGHT + PADEL_INDENT + i*DASHED_LENGTH), DASHED_WIDTH, round(DASHED_LENGTH)))
     
-def draw_window(yellow: pygame.Rect, red: pygame.Rect, ball: Ball, red_score, yellow_score, rally):
+def draw_window(yellow: Padel, red: Padel, ball: Ball, red_score, yellow_score, rally):
     WIN.fill(BLACK)
     draw_dashed_line()
     pygame.draw.rect(WIN, DARK_GREY, (0, 0, WIDTH, TEXT_BAR_HEIGHT))
-    pygame.draw.rect(WIN, RED, (red.x, red.y, PADEL_WIDTH, PADEL_HEIGHT))
-    pygame.draw.rect(WIN, YELLOW, (yellow.x, yellow.y, PADEL_WIDTH, PADEL_HEIGHT))
-    pygame.draw.rect(WIN, get_ball_colour(rally), (ball.x, ball.y, ball.width, ball.height))
+    pygame.draw.rect(WIN, RED, (round(red.x), round(red.y), PADEL_WIDTH, PADEL_HEIGHT))
+    pygame.draw.rect(WIN, YELLOW, (round(yellow.x), round(yellow.y), PADEL_WIDTH, PADEL_HEIGHT))
+    pygame.draw.rect(WIN, get_ball_colour(rally), (round(ball.x), round(ball.y), ball.width, ball.height))
 
     red_score_label = score_font.render(f"RED: {red_score}", True, WHITE)
     yellow_score_label = score_font.render(f"YELLOW: {yellow_score}", True, WHITE)
