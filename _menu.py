@@ -22,7 +22,8 @@ class Menu():
         self.ball_size_button =     SettingButton(lambda: pong.WIDTH / 4 * 3, lambda: pong.HEIGHT / 6 * 2, lambda: self.chosen_setting(self.ball_size_button)    , lambda: f"BALL SIZE: {pong.BALL_WIDTH}"     , pong.WHITE, self.box_colour, "comicsans", 40)
         self.padel_width_button =   SettingButton(lambda: pong.WIDTH / 4    , lambda: pong.HEIGHT / 6 * 3, lambda: self.chosen_setting(self.padel_width_button)  , lambda: f"PADEL WIDTH: {pong.PADEL_WIDTH}"  , pong.WHITE, self.box_colour, "comicsans", 40)
         self.padel_height_button =  SettingButton(lambda: pong.WIDTH / 4 * 3, lambda: pong.HEIGHT / 6 * 3, lambda: self.chosen_setting(self.padel_height_button) , lambda: f"PADEL HEIGHT: {pong.PADEL_HEIGHT}", pong.WHITE, self.box_colour, "comicsans", 40)
-        self.fullscreen_button =    SettingButton(lambda: pong.WIDTH / 2,     lambda: pong.HEIGHT / 6 * 4, self.change_fullscreen                                , lambda: f"FULL SCREEN: {pong.FULLSCREEN}"   , pong.WHITE, self.box_colour, "comicsans", 40)
+        self.fullscreen_button =    SettingButton(lambda: pong.WIDTH / 4    , lambda: pong.HEIGHT / 6 * 4, self.change_fullscreen                                , lambda: f"FULL SCREEN: {pong.FULLSCREEN}"   , pong.WHITE, self.box_colour, "comicsans", 40)
+        self.size_link_button =   SettingButton(lambda: pong.WIDTH / 4 * 3  , lambda: pong.HEIGHT / 6 * 4, self.change_size_link                                 , lambda: f"SIZE LINK: {pong.SIZE_LINK}"      , pong.WHITE, self.box_colour, "comicsans", 40)
 
         self.settings_dict = {
             self.screen_width_button:  self.change_screen_width,
@@ -31,7 +32,8 @@ class Menu():
             self.ball_size_button:     self.change_ball_size,
             self.padel_width_button:   self.change_padel_width,
             self.padel_height_button:  self.change_padel_height,
-            self.fullscreen_button:    self.change_fullscreen
+            self.fullscreen_button:    self.change_fullscreen,
+            self.size_link_button:     self.change_size_link
         }
 
         for button in self.settings_dict:
@@ -65,12 +67,12 @@ class Menu():
 
     def resize(self):
         pong.WIDTH, pong.HEIGHT = pygame.display.get_window_size()
+        pong.update_screen_size()
         for button in self.all_buttons:
             button.resize_text()
             button.update()
         for setting_button in self.settings_dict:
             setting_button.uniform_size(self.settings_dict)
-        pong.update_screen_size()
         self.draw_menu(self.background_colour)
 
     def settings(self):
@@ -186,6 +188,18 @@ class Menu():
             pygame.mouse.set_pos([i * j for i, j in list(zip(mouse_ratio, pong.FULLSCREEN_SIZE))])
         self.fullscreen_button.outline = pong.LIGHT_GREY
         self.setting_chosen = self.fullscreen_button
+
+    def change_size_link(self):
+        if pong.SIZE_LINK:
+            pong.SIZE_LINK = False
+        else:
+            pong.SIZE_LINK = True
+        self.size_link_button.outline = pong.LIGHT_GREY
+        self.setting_chosen = self.size_link_button
+        self.size_link_button.update_text()
+        for setting_button in self.settings_dict:
+            setting_button.uniform_size(self.settings_dict)
+        self.draw_menu(self.background_colour)
 
     def main_menu(self):
         self.back_to_menu_button.get_y = lambda: pong.HEIGHT / 2

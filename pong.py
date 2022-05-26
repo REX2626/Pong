@@ -1,4 +1,6 @@
 from time import perf_counter
+
+from numpy import var
 from objects import Ball, Padel, Powerup, GameEventType, pygame
 import _menu
 import sys
@@ -11,6 +13,7 @@ WIN = pygame.display.set_mode((WIDTH, HEIGHT), flags=pygame.RESIZABLE)
 pygame.display.set_caption("GamingX Pong")
 FULLSCREEN = False
 FULLSCREEN_SIZE = GetSystemMetrics(0), GetSystemMetrics(1)
+SIZE_LINK = True
 
 SPEED = 230
 variable_speed = SPEED
@@ -36,7 +39,7 @@ POWERUP_MAX_Y_RATIO = 1 - POWERUP_MIN_Y_RATIO
 BALL_WIDTH, BALL_HEIGHT = 8, 8
 
 def update_screen_size():
-    global RED_PADEL_X, YELLOW_PADEL_X, PADEL_Y, DASHED_WIDTH, DASHED_X, DASHED_LENGTH, SCORE_FONT, TEXT_BAR_HEIGHT
+    global RED_PADEL_X, YELLOW_PADEL_X, PADEL_Y, DASHED_WIDTH, DASHED_X, DASHED_LENGTH, SCORE_FONT, TEXT_BAR_HEIGHT, BALL_WIDTH, BALL_HEIGHT, PADEL_WIDTH, PADEL_HEIGHT, SPEED, variable_speed
     SCORE_FONT = pygame.font.SysFont("comicsans", round(WIDTH / 45))
     TEXT_BAR_HEIGHT = SCORE_FONT.get_height()
     RED_PADEL_X = PADEL_SIDE_INDENT
@@ -45,6 +48,13 @@ def update_screen_size():
     DASHED_WIDTH = WIDTH / 225
     DASHED_X = round(WIDTH / 2 - DASHED_WIDTH / 2)
     DASHED_LENGTH = (HEIGHT - TEXT_BAR_HEIGHT - 2 * PADEL_INDENT) / 9
+
+    if SIZE_LINK:
+        BALL_WIDTH = BALL_HEIGHT = round(WIDTH / 112.5)
+        PADEL_WIDTH = round(WIDTH / (900 / 13))
+        PADEL_HEIGHT = round(HEIGHT / (500 / 55))
+        SPEED = round(WIDTH / (900 / 230))
+        variable_speed = SPEED
 
 update_screen_size()
 
@@ -59,6 +69,8 @@ def update_playing_screen_size(menu: "_menu.Menu", red: Padel, yellow: Padel, ba
     for button in menu.all_buttons:
         button.update()
     update_screen_size()
+    red.width = yellow.width = PADEL_WIDTH
+    red.height = yellow.height = PADEL_HEIGHT
     red.x = RED_PADEL_X
     yellow.x = YELLOW_PADEL_X
     red.y = red_ratio * (HEIGHT - TEXT_BAR_HEIGHT - 2 * PADEL_INDENT) + TEXT_BAR_HEIGHT + PADEL_INDENT - red.height / 2
@@ -68,6 +80,7 @@ def update_playing_screen_size(menu: "_menu.Menu", red: Padel, yellow: Padel, ba
         padel.y = min(HEIGHT - PADEL_INDENT - PADEL_HEIGHT, padel.y)
     ball.screen_width = WIDTH
     ball.screen_height = HEIGHT
+    ball.width, ball.height = BALL_WIDTH, BALL_HEIGHT
 
     for powerup in powerups:
         # TODO: update powerup positions in a correct way
