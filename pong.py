@@ -28,8 +28,6 @@ PADEL_WIDTH, PADEL_HEIGHT = 13, 55
 PADEL_INDENT = 10
 PADEL_SIDE_INDENT = 80
 
-DASHED_WIDTH = 4
-
 POWERUP_MIN_X_RATIO = 0.30
 POWERUP_MAX_X_RATIO = 1 - POWERUP_MIN_X_RATIO
 POWERUP_MIN_Y_RATIO = 0.05
@@ -38,12 +36,13 @@ POWERUP_MAX_Y_RATIO = 1 - POWERUP_MIN_Y_RATIO
 BALL_WIDTH, BALL_HEIGHT = 8, 8
 
 def update_screen_size():
-    global RED_PADEL_X, YELLOW_PADEL_X, PADEL_Y, DASHED_X, DASHED_LENGTH, SCORE_FONT, TEXT_BAR_HEIGHT
+    global RED_PADEL_X, YELLOW_PADEL_X, PADEL_Y, DASHED_WIDTH, DASHED_X, DASHED_LENGTH, SCORE_FONT, TEXT_BAR_HEIGHT
     SCORE_FONT = pygame.font.SysFont("comicsans", round(WIDTH / 45))
     TEXT_BAR_HEIGHT = SCORE_FONT.get_height()
     RED_PADEL_X = PADEL_SIDE_INDENT
     YELLOW_PADEL_X = WIDTH - PADEL_SIDE_INDENT - PADEL_WIDTH
     PADEL_Y = TEXT_BAR_HEIGHT + (HEIGHT - TEXT_BAR_HEIGHT) / 2 - PADEL_HEIGHT / 2
+    DASHED_WIDTH = WIDTH / 225
     DASHED_X = round(WIDTH / 2 - DASHED_WIDTH / 2)
     DASHED_LENGTH = (HEIGHT - TEXT_BAR_HEIGHT - 2 * PADEL_INDENT) / 9
 
@@ -81,7 +80,7 @@ def get_ball_colour(rally):
 
 def draw_dashed_line():
     for i in range(0, 10, 2):
-        pygame.draw.rect(WIN, WHITE, (DASHED_X, round(TEXT_BAR_HEIGHT + PADEL_INDENT + i*DASHED_LENGTH), DASHED_WIDTH, round(DASHED_LENGTH)))
+        pygame.draw.rect(WIN, WHITE, (DASHED_X, round(TEXT_BAR_HEIGHT + PADEL_INDENT + i*DASHED_LENGTH), round(DASHED_WIDTH), round(DASHED_LENGTH)))
     
 def draw_window(yellow: Padel, red: Padel, ball: Ball, powerups: "list[Powerup]", red_score, yellow_score, rally):
     WIN.fill(BLACK)
