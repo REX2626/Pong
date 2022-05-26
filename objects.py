@@ -180,6 +180,8 @@ class Ball(SquareEntity):
             self.spiny = 0 # to avoid bouncing back into the paddle
             # shift to the inverse of the intersection vector to escape collision
             self.y -= intersection_vector[1]
+            if self.y + self.width > self.screen_height or self.y < self.text_bar_height:
+                self.y -= padel.get_height() + self.height
 
     def boundary_collision(self):
         if self.y < self.text_bar_height + 2:
