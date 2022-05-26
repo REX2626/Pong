@@ -229,7 +229,7 @@ def main(red_handle_movement, menu: "_menu.Menu"):
     ball = Ball(WIDTH, HEIGHT, BALL_WIDTH, BALL_HEIGHT, TEXT_BAR_HEIGHT)
 
     powerups: "list[Powerup]" = []
-    for _ in range(500):
+    for _ in range(5):
         powerups.append(Powerup.create_random(
             screen_width=WIDTH,
             min_x=WIDTH * POWERUP_MIN_X_RATIO,
