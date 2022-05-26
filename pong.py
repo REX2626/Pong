@@ -1,7 +1,6 @@
 from time import perf_counter
 
-from numpy import var
-from objects import Ball, Padel, Powerup, GameEventType, pygame
+from objects import Ball, Padel, Powerup, PowerupEffect, BallPowerupEffect, GameEventType, pygame
 import _menu
 import sys
 from win32api import GetSystemMetrics
@@ -160,7 +159,18 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel, powerups: "list[
     for powerup in powerups:
         ball_hit_powerup = powerup.handle_collisions(ball)
         if not ball_hit_powerup: continue
+        
+        effect = powerup.powerup_type.powerup_effect
+        if isinstance(effect, BallPowerupEffect):
+            effect.ball_effect_func(ball)
+
         powerups.remove(powerup)
+        powerups.append(Powerup.create_random(
+            min_x=WIDTH * POWERUP_MIN_X_RATIO,
+            max_x=WIDTH * POWERUP_MAX_X_RATIO,
+            min_y=(HEIGHT - TEXT_BAR_HEIGHT) * POWERUP_MIN_Y_RATIO + TEXT_BAR_HEIGHT,
+            max_y=(HEIGHT - TEXT_BAR_HEIGHT) * POWERUP_MAX_Y_RATIO + TEXT_BAR_HEIGHT,
+        ))
 
     for paddle in (red, yellow):
         if ball.collides_with_paddle_check(paddle):

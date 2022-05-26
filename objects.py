@@ -195,6 +195,11 @@ class PowerupEffect:
     pass
 
 
+class BallPowerupEffect(PowerupEffect):
+    def __init__(self, ball_effect_func) -> None:
+        self.ball_effect_func = ball_effect_func
+
+
 class PowerupType:
     def __init__(self, name: str, image_path: str, *, weight: int, powerup_effect: PowerupEffect, width: float=50, height: float=50) -> None:
         self.name = name
@@ -206,9 +211,23 @@ class PowerupType:
 
 class Powerup(SquareEntity):
     POWERUP_TYPES = (
-        PowerupType("test1", "./assets/test_powerup.png", weight=10, powerup_effect=PowerupEffect()),
-        PowerupType("test2", "./assets/test_powerup.png", weight=20, powerup_effect=PowerupEffect()),
-        PowerupType("test3", "./assets/test_powerup.png", weight=30, powerup_effect=PowerupEffect())
+        PowerupType("test",        "./assets/test_powerup.png",   weight= 0, powerup_effect=PowerupEffect()),
+        PowerupType("speed_small", "./assets/speed_powerup1.png", weight=50, powerup_effect=BallPowerupEffect(
+            lambda ball: (
+                setattr(ball, "vx", ball.vx*1.5),
+                setattr(ball, "vy", ball.vy*1.5),
+                setattr(ball, "spinx", ball.spinx*1.5),
+                setattr(ball, "spiny", ball.spiny*1.5)
+            )
+        )),
+        PowerupType("speed_big",   "./assets/speed_powerup2.png", weight=30, powerup_effect=BallPowerupEffect(
+            lambda ball: (
+                setattr(ball, "vx", ball.vx*2),
+                setattr(ball, "vy", ball.vy*2),
+                setattr(ball, "spinx", ball.spinx*2),
+                setattr(ball, "spiny", ball.spiny*2)
+            )
+        ))
     )
 
     def __init__(self, x, y, powerup_type: PowerupType) -> None:
@@ -238,7 +257,7 @@ class Powerup(SquareEntity):
             powerup_type=powerup_type
         )
 
-    def handle_collisions(self, ball: Ball) -> bool:
+    def handle_collisions(self, ball: Ball) -> "bool":
         if not self.rect().intersects_other_rect(ball.rect()): return False
 
         # TODO: do cool stuff e.g. increase ball speed etc
