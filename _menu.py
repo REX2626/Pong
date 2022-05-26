@@ -22,7 +22,7 @@ class Menu():
         self.ball_size_button =     SettingButton(lambda: pong.WIDTH / 4 * 3, lambda: pong.HEIGHT / 6 * 2, lambda: self.chosen_setting(self.ball_size_button)    , lambda: f"BALL SIZE: {pong.BALL_WIDTH}"     , pong.WHITE, self.box_colour, "comicsans", 40)
         self.padel_width_button =   SettingButton(lambda: pong.WIDTH / 4    , lambda: pong.HEIGHT / 6 * 3, lambda: self.chosen_setting(self.padel_width_button)  , lambda: f"PADEL WIDTH: {pong.PADEL_WIDTH}"  , pong.WHITE, self.box_colour, "comicsans", 40)
         self.padel_height_button =  SettingButton(lambda: pong.WIDTH / 4 * 3, lambda: pong.HEIGHT / 6 * 3, lambda: self.chosen_setting(self.padel_height_button) , lambda: f"PADEL HEIGHT: {pong.PADEL_HEIGHT}", pong.WHITE, self.box_colour, "comicsans", 40)
-        self.fullscreen_button =    SettingButton(lambda: pong.WIDTH / 2,     lambda: pong.HEIGHT / 6 * 4, lambda: self.chosen_setting(self.fullscreen_button)   , lambda: f"FULL SCREEN: {pong.FULLSCREEN}"   , pong.WHITE, self.box_colour, "comicsans", 40)
+        self.fullscreen_button =    SettingButton(lambda: pong.WIDTH / 2,     lambda: pong.HEIGHT / 6 * 4, self.change_fullscreen                                , lambda: f"FULL SCREEN: {pong.FULLSCREEN}"   , pong.WHITE, self.box_colour, "comicsans", 40)
 
         self.settings_dict = {
             self.screen_width_button:  self.change_screen_width,
@@ -171,13 +171,21 @@ class Menu():
     def change_padel_height(self, change):
         pong.PADEL_HEIGHT = max(0, min(pong.HEIGHT - pong.TEXT_BAR_HEIGHT - 2 * pong.PADEL_INDENT, pong.PADEL_HEIGHT + change))
 
-    def change_fullscreen(self, _):
+    def change_fullscreen(self, _=None):
         if pong.FULLSCREEN:
             pong.FULLSCREEN = False
+            # Mouse moves when resizing, this keeps mouse in same relative position
+            mouse_ratio = [i / j for i, j in list(zip(pygame.mouse.get_pos(), pygame.display.get_window_size()))]
+            pygame.mouse.set_pos([i * j for i, j in list(zip(mouse_ratio, (900, 500)))])
             pygame.display.set_mode((900, 500), flags=pygame.RESIZABLE)
         else:
             pong.FULLSCREEN = True
-            pygame.display.set_mode(flags=pygame.FULLSCREEN+pygame.RESIZABLE)
+            # Mouse moves when resizing, this keeps mouse in same relative position
+            mouse_ratio = [i / j for i, j in list(zip(pygame.mouse.get_pos(), pygame.display.get_window_size()))]
+            pygame.display.set_mode(flags=pygame.FULLSCREEN)
+            pygame.mouse.set_pos([i * j for i, j in list(zip(mouse_ratio, pong.FULLSCREEN_SIZE))])
+        self.fullscreen_button.outline = pong.LIGHT_GREY
+        self.setting_chosen = self.fullscreen_button
 
     def main_menu(self):
         self.back_to_menu_button.get_y = lambda: pong.HEIGHT / 2

@@ -2,6 +2,7 @@ from time import perf_counter
 from objects import Ball, Padel, Powerup, GameEventType, pygame
 import _menu
 import sys
+from win32api import GetSystemMetrics
 
 pygame.init()
 
@@ -9,6 +10,7 @@ WIDTH, HEIGHT = 900, 500
 WIN = pygame.display.set_mode((WIDTH, HEIGHT), flags=pygame.RESIZABLE)
 pygame.display.set_caption("GamingX Pong")
 FULLSCREEN = False
+FULLSCREEN_SIZE = GetSystemMetrics(0), GetSystemMetrics(1)
 
 SPEED = 230
 variable_speed = SPEED
