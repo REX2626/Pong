@@ -1,5 +1,6 @@
 import random
 from enum import Enum
+import pygame
 
 
 class GameEventType(Enum):
@@ -44,8 +45,8 @@ class Rect():
         '''(can return negative numbers)'''
         return self.bry - self.tly
 
-    def draw(self, window, pygame_draw_module, colour):
-        pygame_draw_module.rect(window, colour, [self.tlx, self.tly, self.width(), self.height()])
+    def draw(self, window, colour):
+        pygame.draw.rect(window, colour, [self.tlx, self.tly, self.width(), self.height()])
 
 
 def sub_points(point_a: "tuple(float, float)", point_b: "tuple(float, float)") -> "tuple(float, float)":
@@ -57,7 +58,7 @@ def sign(x):
 
 
 class Entity():
-    def __init__(self, x, y) -> None:
+    def __init__(self, x: float, y: float) -> None:
         self.x = x
         self.y = y
 
@@ -71,8 +72,8 @@ class SquareEntity(Entity):
     def rect(self) -> Rect:
         return Rect(self.x, self.y, self.x + self.width, self.y + self.height)
 
-    def draw(self, window, pygame_draw_module, colour):
-        self.rect().draw(window, pygame_draw_module, colour)
+    def draw(self, window, colour):
+        self.rect().draw(window, colour)
 
 
 class Padel(SquareEntity):

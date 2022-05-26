@@ -1,6 +1,5 @@
 from time import perf_counter
-import pygame
-from objects import Ball, Padel, GameEventType
+from objects import Ball, Padel, GameEventType, pygame
 import _menu
 import sys
 
@@ -77,9 +76,9 @@ def draw_window(yellow: Padel, red: Padel, ball: Ball, red_score, yellow_score, 
     WIN.fill(BLACK)
     draw_dashed_line()
     pygame.draw.rect(WIN, DARK_GREY, (0, 0, WIDTH, TEXT_BAR_HEIGHT))
-    red.draw(WIN, pygame.draw, RED)
-    yellow.draw(WIN, pygame.draw, YELLOW)
-    ball.draw(WIN, pygame.draw, get_ball_colour(rally))
+    red.draw(WIN, RED)
+    yellow.draw(WIN, YELLOW)
+    ball.draw(WIN, get_ball_colour(rally))
 
     red_score_label = SCORE_FONT.render(f"RED: {red_score}", True, WHITE)
     yellow_score_label = SCORE_FONT.render(f"YELLOW: {yellow_score}", True, WHITE)
