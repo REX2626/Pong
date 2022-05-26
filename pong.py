@@ -73,7 +73,7 @@ def update_playing_screen_size(menu: "_menu.Menu", red: Padel, yellow: Padel, ba
     red.y = red_ratio * (HEIGHT - TEXT_BAR_HEIGHT - 2 * PADEL_INDENT) + TEXT_BAR_HEIGHT + PADEL_INDENT - red.height / 2
     yellow.y = yellow_ratio * (HEIGHT - TEXT_BAR_HEIGHT - 2 * PADEL_INDENT) + TEXT_BAR_HEIGHT + PADEL_INDENT - yellow.height / 2
 
-    for padel in (red, yellow):
+    for padel in (red, yellow): # If padel is clipping the top or bottom move inside playable area
         padel.y = max(TEXT_BAR_HEIGHT + PADEL_INDENT, padel.y)
         padel.y = min(HEIGHT - PADEL_INDENT - PADEL_HEIGHT, padel.y)
 
@@ -83,10 +83,18 @@ def update_playing_screen_size(menu: "_menu.Menu", red: Padel, yellow: Padel, ba
     ball.width, ball.height = BALL_WIDTH, BALL_HEIGHT
 
     for idx, powerup in enumerate(powerups):
+        ## Set width and height ##
         powerup.width = powerup.powerup_type.width * WIDTH
         powerup.height = powerup.powerup_type.height * WIDTH # This is WIDTH as well to make the ratio same as for the width, not a bug
+        ## Set coordinates ##
         powerup.x = powerup_ratio_x[idx] * WIDTH - powerup.width / 2
         powerup.y = powerup_ratio_y[idx] * (HEIGHT - TEXT_BAR_HEIGHT) + TEXT_BAR_HEIGHT - powerup.height / 2
+        ## Fix coordinates if clipping sides ##
+        powerup.x = max(0, powerup.x)
+        powerup.x = min(WIDTH - powerup.width, powerup.x)
+        powerup.y = max(TEXT_BAR_HEIGHT, powerup.y)
+        powerup.y = min(HEIGHT - powerup.height, powerup.y)
+        ## Resize powerup image ##
         powerup.image = pygame.image.load(powerup.powerup_type.image_path)
         powerup.image = pygame.transform.scale(powerup.image, (powerup.width, powerup.height)).convert()
 
