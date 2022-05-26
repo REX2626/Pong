@@ -97,12 +97,10 @@ class Padel(SquareEntity):
         self.extra_height = 0
         self.extra_height_change_rate = 0
 
-    def update(self, dt: "float", speed: "float"):
-        if self.extra_height > 0 and sign(self.extra_height_change_rate) < 0 or\
-           self.extra_height < 0 and sign(self.extra_height_change_rate) > 0:
-            self.extra_height += dt*self.extra_height_change_rate
+    def update(self, dt: float, speed: float):
+        if self.extra_height:
+            self.extra_height = max(0, self.extra_height + dt * self.extra_height_change_rate)
         else:
-            self.extra_height = 0
             self.extra_height_change_rate = 0
 
     def get_y(self):
@@ -112,7 +110,7 @@ class Padel(SquareEntity):
         return self.height + self.extra_height
 
     def rect(self) -> Rect:
-        return Rect(self.x, self.get_y(), self.x + self.width, self.y + self.height + self.extra_height)
+        return Rect(self.x, self.get_y(), self.x + self.width, self.get_y() + self.height + self.extra_height)
 
 
 class Ball(SquareEntity):
@@ -123,7 +121,7 @@ class Ball(SquareEntity):
         self.text_bar_height = text_bar_height
         self.restart()
 
-    def update(self, dt: "float", speed: "float"):
+    def update(self, dt: float, speed: float):
         self.move(speed)
 
     def move(self, speed):
