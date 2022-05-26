@@ -228,7 +228,7 @@ class Button():
         self.outline = colour
         self.font = pygame.font.SysFont(font, font_size)
         self.font_type = font
-        self.font_size = pong.WIDTH / font_size
+        self.font_size = 900 / font_size
         self.label = self.font.render(text, True, text_colour)
         self.width = self.label.get_width()
         self.height = self.label.get_height()

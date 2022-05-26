@@ -55,8 +55,6 @@ def update_screen_size():
         SPEED = round(WIDTH / (900 / 230))
         variable_speed = SPEED
 
-update_screen_size()
-
 
 def update_playing_screen_size(menu: "_menu.Menu", red: Padel, yellow: Padel, ball: Ball, powerups: "list[Powerup]"):
     global WIDTH, HEIGHT
@@ -278,7 +276,7 @@ def main(red_handle_movement, menu: "_menu.Menu"):
 
 def main_menu():
     menu = _menu.Menu()
-    menu.draw_menu(DARK_GREY)
+    menu.resize()
     run = True
     while run:
 
