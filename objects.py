@@ -241,7 +241,7 @@ class Powerup(SquareEntity):
         )),
         PowerupType("spin_big",     "./assets/spin_powerup2.png", weight=8, powerup_effect=BallPowerupEffect(
             lambda ball: (
-                setattr(ball, "spiny", ball.spiny + 3.0*sign(ball.spiny)),
+                setattr(ball, "spiny", ball.spiny + 2.0*sign(ball.spiny)),
             )
         ))
     )
