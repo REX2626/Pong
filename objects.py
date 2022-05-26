@@ -191,21 +191,51 @@ class Ball(SquareEntity):
         self.ball_has_hit_side = False
 
 
-class Powerup(SquareEntity):
-    def __init__(self, x, y, width, height, image_path) -> None:
-        super().__init__(x, y, width, height)
+class PowerupEffect:
+    pass
+
+
+class PowerupType:
+    def __init__(self, name: str, image_path: str, *, weight: int, powerup_effect: PowerupEffect, width: float=50, height: float=50) -> None:
+        self.name = name
         self.image_path = image_path
+        self.weight = weight
+        self.width = width
+        self.height = height
+        self.powerup_effect = powerup_effect
+
+class Powerup(SquareEntity):
+    POWERUP_TYPES = (
+        PowerupType("test1", "./assets/test_powerup.png", weight=10, powerup_effect=PowerupEffect()),
+        PowerupType("test2", "./assets/test_powerup.png", weight=20, powerup_effect=PowerupEffect()),
+        PowerupType("test3", "./assets/test_powerup.png", weight=30, powerup_effect=PowerupEffect())
+    )
+
+    def __init__(self, x, y, powerup_type: PowerupType) -> None:
+        super().__init__(x, y, powerup_type.width, powerup_type.height)
+        self.powerup_type = powerup_type
 
     @classmethod
-    def create_random(self, min_x, max_x, min_y, max_y, width, height) -> "Powerup":
-        min_x, max_x, min_y, max_y, width, height = (int(x) for x in (min_x, max_x, min_y, max_y, width, height))
+    def random_powerup_type(cls) -> PowerupType:
+        '''Returns a random `PowerupType` object, where types with a higher `weight` are more likely to be picked'''
+        return random.choices(
+            population=cls.POWERUP_TYPES,
+            weights=tuple(pt.weight for pt in cls.POWERUP_TYPES),
+            k=1 # k = the number of things to be chosen
+        )[0] # indexed at 0 because this returns a list, but it is only 1 element as k=1
+
+    @classmethod
+    def create_random(cls, min_x, max_x, min_y, max_y) -> "Powerup":
+        powerup_type = cls.random_powerup_type()
+
+        min_x, max_x, min_y, max_y, width, height = (int(x) for x in (min_x, max_x, min_y, max_y, powerup_type.width, powerup_type.height))
         if max_x - min_x - width  < 0: raise ValueError(f"No area to place powerup of width {width} when min_x is {min_x} and max_x is {max_x}")
         if max_y - min_y - height < 0: raise ValueError(f"No area to place powerup of height {height} when min_y is {min_y} and max_y is {max_y}")
+
         return Powerup(
             x=random.randrange(min_x, max_x - width),
             y=random.randrange(min_y, max_y - height),
-            width=width, height=height,
-            image_path="./assets/test_powerup.png"
+            powerup_type=powerup_type
         )
 
     def handle_collisions(self, ball: Ball) -> bool:
@@ -217,6 +247,6 @@ class Powerup(SquareEntity):
 
     def draw(self, window: "pygame.Surface"):
         if not hasattr(self, "image"):
-            self.image = pygame.image.load(self.image_path)
+            self.image = pygame.image.load(self.powerup_type.image_path)
             self.image = pygame.transform.scale(self.image, (self.width, self.height))
         window.blit(self.image, [self.x, self.y])
