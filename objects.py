@@ -2,7 +2,6 @@ import random
 from enum import Enum
 
 
-
 class GameEventType(Enum):
     NONE = 0
     RALLY = 1
@@ -37,6 +36,17 @@ class Rect():
     def bot_r(self) -> "tuple(float, float)":
         return (self.brx, self.bry)
 
+    def width(self) -> "float":
+        '''(can return negative numbers)'''
+        return self.brx - self.tlx
+
+    def height(self) -> "float":
+        '''(can return negative numbers)'''
+        return self.bry - self.tly
+
+    def draw(self, window, pygame_draw_module, colour):
+        pygame_draw_module.rect(window, colour, [self.tlx, self.tly, self.width(), self.height()])
+
 
 def add_points(point_a: "tuple(float, float)", point_b: "tuple(float, float)") -> "tuple(float, float)":
     return tuple(point_a[i] + point_b[i] for i in (0, 1))
@@ -49,26 +59,37 @@ def sign(x):
     return -1
 
 
-
-class Padel():
-    def __init__(self, x, y, width, height) -> None:
+class Entity():
+    def __init__(self, x, y) -> None:
         self.x = x
         self.y = y
+
+
+class SquareEntity(Entity):
+    def __init__(self, x, y, width, height) -> None:
+        super().__init__(x, y)
         self.width = width
         self.height = height
-        self.moving_down = False
-        self.moving_up = False
 
     def rect(self) -> Rect:
         return Rect(self.x, self.y, self.x + self.width, self.y + self.height)
 
+    def draw(self, window, pygame_draw_module, colour):
+        self.rect().draw(window, pygame_draw_module, colour)
 
-class Ball():
-    def __init__(self, width, height, ball_width, ball_height, text_bar_height) -> None:
-        self.screen_width = width
-        self.screen_height = height
-        self.width = ball_width
-        self.height = ball_height
+
+class Padel(SquareEntity):
+    def __init__(self, x, y, width, height) -> None:
+        super().__init__(x, y, width, height)
+        self.moving_down = False
+        self.moving_up = False
+
+
+class Ball(SquareEntity):
+    def __init__(self, screen_width, screen_height, ball_width, ball_height, text_bar_height) -> None:
+        super().__init__(0, 0, ball_width, ball_height)
+        self.screen_width = screen_width
+        self.screen_height = screen_height
         self.text_bar_height = text_bar_height
         self.restart()
 
@@ -144,9 +165,6 @@ class Ball():
             return GameEventType.YELLOW
         elif self.x > self.screen_width:
             return GameEventType.RED
-    
-    def rect(self) -> Rect:
-        return Rect(self.x, self.y, self.x + self.width, self.y + self.height)
 
     def restart(self):
         self.x = self.screen_width / 2 - self.width / 2
