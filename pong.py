@@ -1,4 +1,4 @@
-from time import perf_counter
+import time
 
 from objects import Ball, Padel, Powerup, PowerupEffect, BallPowerupEffect, GameEventType, pygame
 import _menu
@@ -219,7 +219,7 @@ def main(red_handle_movement, menu: "_menu.Menu"):
     not_paused = True
     while running:
         while not_paused:
-            time1 = perf_counter()
+            time1 = time.perf_counter()
             speed = variable_speed * delta_time
 
             keys_pressed = pygame.key.get_pressed()
@@ -253,7 +253,7 @@ def main(red_handle_movement, menu: "_menu.Menu"):
                     menu.pause()
 
 
-            time2 = perf_counter()
+            time2 = time.perf_counter()
             delta_time = time2 - time1
         
         for event in pygame.event.get():

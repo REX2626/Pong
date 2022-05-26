@@ -211,8 +211,8 @@ class PowerupType:
 
 class Powerup(SquareEntity):
     POWERUP_TYPES = (
-        PowerupType("test",        "./assets/test_powerup.png",   weight= 0, powerup_effect=PowerupEffect()),
-        PowerupType("speed_small", "./assets/speed_powerup1.png", weight=50, powerup_effect=BallPowerupEffect(
+        PowerupType("test",        "./assets/test_powerup.png",   weight=0,  powerup_effect=PowerupEffect()),
+        PowerupType("speed_small", "./assets/speed_powerup1.png", weight=40, powerup_effect=BallPowerupEffect(
             lambda ball: (
                 setattr(ball, "vx", ball.vx*1.5),
                 setattr(ball, "vy", ball.vy*1.5),
@@ -220,12 +220,24 @@ class Powerup(SquareEntity):
                 setattr(ball, "spiny", ball.spiny*1.5)
             )
         )),
-        PowerupType("speed_big",   "./assets/speed_powerup2.png", weight=15, powerup_effect=BallPowerupEffect(
+        PowerupType("speed_big",   "./assets/speed_powerup2.png", weight=9,  powerup_effect=BallPowerupEffect(
             lambda ball: (
                 setattr(ball, "vx", ball.vx*2),
                 setattr(ball, "vy", ball.vy*2),
                 setattr(ball, "spinx", ball.spinx*2),
                 setattr(ball, "spiny", ball.spiny*2)
+            )
+        )),
+        PowerupType("bounce",      "./assets/bounce_powerup.png", weight=40, powerup_effect=BallPowerupEffect(
+            lambda ball: (
+                setattr(ball, "vx", ball.vx*-1),
+                setattr(ball, "spinx", ball.spinx*-1),
+            )
+        )),
+        PowerupType("spin_small",   "./assets/spin_powerup1.png", weight=30, powerup_effect=BallPowerupEffect(
+            lambda ball: (
+                setattr(ball, "spinx", ball.spinx*2.5),
+                setattr(ball, "spiny", ball.spiny*2.5),
             )
         ))
     )
