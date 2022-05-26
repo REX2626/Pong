@@ -220,7 +220,7 @@ class Powerup(SquareEntity):
                 setattr(ball, "spiny", ball.spiny*1.5)
             )
         )),
-        PowerupType("speed_big",   "./assets/speed_powerup2.png", weight=30, powerup_effect=BallPowerupEffect(
+        PowerupType("speed_big",   "./assets/speed_powerup2.png", weight=15, powerup_effect=BallPowerupEffect(
             lambda ball: (
                 setattr(ball, "vx", ball.vx*2),
                 setattr(ball, "vy", ball.vy*2),
@@ -244,18 +244,27 @@ class Powerup(SquareEntity):
         )[0] # indexed at 0 because this returns a list, but it is only 1 element as k=1
 
     @classmethod
-    def create_random(cls, min_x, max_x, min_y, max_y) -> "Powerup":
+    def create_random(cls, min_x, max_x, min_y, max_y, other_powerups_present: "list[Powerup]") -> "Powerup":
         powerup_type = cls.random_powerup_type()
 
         min_x, max_x, min_y, max_y, width, height = (int(x) for x in (min_x, max_x, min_y, max_y, powerup_type.width, powerup_type.height))
         if max_x - min_x - width  < 0: raise ValueError(f"No area to place powerup of width {width} when min_x is {min_x} and max_x is {max_x}")
         if max_y - min_y - height < 0: raise ValueError(f"No area to place powerup of height {height} when min_y is {min_y} and max_y is {max_y}")
 
-        return Powerup(
-            x=random.randrange(min_x, max_x - width),
-            y=random.randrange(min_y, max_y - height),
-            powerup_type=powerup_type
-        )
+        for _ in range(30): # put it in a random place until it is not touching any other powerups
+            new_powerup = Powerup(
+                x=random.randrange(min_x, max_x - width),
+                y=random.randrange(min_y, max_y - height),
+                powerup_type=powerup_type
+            )
+            passed = True
+            for other_powerup in other_powerups_present:
+                if new_powerup.rect().intersects_other_rect(other_powerup.rect()):
+                    passed = False
+                    break
+            if passed: return new_powerup
+
+        return new_powerup # either we got REALLY unlucky, or there is no spot for it in which case just give up and return it anyways
 
     def handle_collisions(self, ball: Ball) -> "bool":
         if not self.rect().intersects_other_rect(ball.rect()): return False
