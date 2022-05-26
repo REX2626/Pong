@@ -191,8 +191,6 @@ def main(red_handle_movement, menu: "_menu.Menu"):
             max_x=WIDTH * POWERUP_MAX_X_RATIO,
             min_y=(HEIGHT - TEXT_BAR_HEIGHT) * POWERUP_MIN_Y_RATIO + TEXT_BAR_HEIGHT,
             max_y=(HEIGHT - TEXT_BAR_HEIGHT) * POWERUP_MAX_Y_RATIO + TEXT_BAR_HEIGHT,
-            width=50,
-            height=50
         ))
 
     running = True
