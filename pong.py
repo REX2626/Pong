@@ -1,6 +1,4 @@
 from time import perf_counter
-
-from numpy import var
 from objects import Ball, Padel, Powerup, GameEventType, pygame
 import _menu
 import sys
