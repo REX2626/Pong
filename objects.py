@@ -189,3 +189,34 @@ class Ball(SquareEntity):
         self.vx, self.vy = vx**0.5, vy**0.5
         self.vx *= random.randint(0, 1) * 2 - 1
         self.ball_has_hit_side = False
+
+
+class Powerup(SquareEntity):
+    def __init__(self, x, y, width, height, image_path) -> None:
+        super().__init__(x, y, width, height)
+        self.image_path = image_path
+
+    @classmethod
+    def create_random(self, min_x, max_x, min_y, max_y, width, height) -> "Powerup":
+        min_x, max_x, min_y, max_y, width, height = (int(x) for x in (min_x, max_x, min_y, max_y, width, height))
+        if max_x - min_x - width  < 0: raise ValueError(f"No area to place powerup of width {width} when min_x is {min_x} and max_x is {max_x}")
+        if max_y - min_y - height < 0: raise ValueError(f"No area to place powerup of height {height} when min_y is {min_y} and max_y is {max_y}")
+        return Powerup(
+            x=random.randrange(min_x, max_x - width),
+            y=random.randrange(min_y, max_y - height),
+            width=width, height=height,
+            image_path="./assets/test_powerup.png"
+        )
+
+    def handle_collisions(self, ball: Ball) -> bool:
+        if not self.rect().intersects_other_rect(ball.rect()): return False
+
+        # TODO: do cool stuff e.g. increase ball speed etc
+
+        return True
+
+    def draw(self, window: "pygame.Surface"):
+        if not hasattr(self, "image"):
+            self.image = pygame.image.load(self.image_path)
+            self.image = pygame.transform.scale(self.image, (self.width, self.height))
+        window.blit(self.image, [self.x, self.y])

@@ -1,5 +1,5 @@
 from time import perf_counter
-from objects import Ball, Padel, GameEventType, pygame
+from objects import Ball, Padel, Powerup, GameEventType, pygame
 import _menu
 import sys
 
@@ -28,6 +28,11 @@ PADEL_SIDE_INDENT = 80
 
 DASHED_WIDTH = 4
 
+POWERUP_MIN_X_RATIO = 0.30
+POWERUP_MAX_X_RATIO = 1 - POWERUP_MIN_X_RATIO
+POWERUP_MIN_Y_RATIO = 0.05
+POWERUP_MAX_Y_RATIO = 1 - POWERUP_MIN_Y_RATIO
+
 BALL_WIDTH, BALL_HEIGHT = 8, 8
 
 def update_screen_size():
@@ -43,7 +48,7 @@ def update_screen_size():
 update_screen_size()
 
 
-def update_playing_screen_size(menu: "_menu.Menu", red: Padel, yellow: Padel, ball: Ball):
+def update_playing_screen_size(menu: "_menu.Menu", red: Padel, yellow: Padel, ball: Ball, powerups: "list[Powerup]"):
     global WIDTH, HEIGHT
     red_ratio = (red.y + red.height / 2 - TEXT_BAR_HEIGHT - PADEL_INDENT) / (HEIGHT - TEXT_BAR_HEIGHT - 2 * PADEL_INDENT)
     yellow_ratio = (yellow.y + yellow.height / 2 - TEXT_BAR_HEIGHT - PADEL_INDENT) / (HEIGHT - TEXT_BAR_HEIGHT - 2 * PADEL_INDENT)
@@ -63,6 +68,10 @@ def update_playing_screen_size(menu: "_menu.Menu", red: Padel, yellow: Padel, ba
     ball.screen_width = WIDTH
     ball.screen_height = HEIGHT
 
+    for powerup in powerups:
+        # TODO: update powerup positions in a correct way
+        pass
+
 
 def get_ball_colour(rally):
     return (255, max(0, 255 - rally * 10), max(0, 255 - rally * 10))
@@ -72,10 +81,14 @@ def draw_dashed_line():
     for i in range(0, 10, 2):
         pygame.draw.rect(WIN, WHITE, (DASHED_X, round(TEXT_BAR_HEIGHT + PADEL_INDENT + i*DASHED_LENGTH), DASHED_WIDTH, round(DASHED_LENGTH)))
     
-def draw_window(yellow: Padel, red: Padel, ball: Ball, red_score, yellow_score, rally):
+def draw_window(yellow: Padel, red: Padel, ball: Ball, powerups: "list[Powerup]", red_score, yellow_score, rally):
     WIN.fill(BLACK)
     draw_dashed_line()
-    pygame.draw.rect(WIN, DARK_GREY, (0, 0, WIDTH, TEXT_BAR_HEIGHT))
+
+    for powerup in powerups:
+        powerup.draw(WIN)
+
+    pygame.draw.rect(WIN, DARK_GREY, (0, 0, WIDTH, TEXT_BAR_HEIGHT)) # the background for the text bar at the top
     red.draw(WIN, RED)
     yellow.draw(WIN, YELLOW)
     ball.draw(WIN, get_ball_colour(rally))
@@ -127,11 +140,16 @@ def yellow_handle_movement(keys_pressed, yellow: Padel, speed):
     return yellow
 
 
-def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel, speed):
+def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel, powerups: "list[Powerup]", speed):
     global variable_speed
     global last_collided
     game_event = GameEventType.NONE
     ball.move(speed)
+
+    for powerup in powerups:
+        ball_hit_powerup = powerup.handle_collisions(ball)
+        if not ball_hit_powerup: continue
+        powerups.remove(powerup)
 
     for paddle in (red, yellow):
         if ball.collides_with_paddle_check(paddle):
@@ -165,6 +183,17 @@ def main(red_handle_movement, menu: "_menu.Menu"):
 
     ball = Ball(WIDTH, HEIGHT, BALL_WIDTH, BALL_HEIGHT, TEXT_BAR_HEIGHT)
 
+    powerups: "list[Powerup]" = []
+    for _ in range(3):
+        powerups.append(Powerup.create_random(
+            min_x=WIDTH * POWERUP_MIN_X_RATIO,
+            max_x=WIDTH * POWERUP_MAX_X_RATIO,
+            min_y=(HEIGHT - TEXT_BAR_HEIGHT) * POWERUP_MIN_Y_RATIO + TEXT_BAR_HEIGHT,
+            max_y=(HEIGHT - TEXT_BAR_HEIGHT) * POWERUP_MAX_Y_RATIO + TEXT_BAR_HEIGHT,
+            width=50,
+            height=50
+        ))
+
     running = True
     not_paused = True
     while running:
@@ -176,7 +205,7 @@ def main(red_handle_movement, menu: "_menu.Menu"):
             red = red_handle_movement(keys_pressed, red, ball, speed)
             yellow = yellow_handle_movement(keys_pressed, yellow, speed)
 
-            game_event = handle_ball_movement(ball, yellow, red, speed)
+            game_event = handle_ball_movement(ball, yellow, red, powerups, speed)
             if game_event == GameEventType.RED:
                 red_score += 1
                 rally = 0
@@ -186,7 +215,7 @@ def main(red_handle_movement, menu: "_menu.Menu"):
             elif game_event == GameEventType.RALLY:
                 rally += 1
 
-            draw_window(yellow, red, ball, red_score, yellow_score, rally)
+            draw_window(yellow, red, ball, powerups, red_score, yellow_score, rally)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
