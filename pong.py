@@ -1,13 +1,13 @@
-import time
-
+from time import perf_counter
 from objects import Ball, Padel, Powerup, PowerupEffect, BallPowerupEffect, GameEventType, pygame
 import _menu
 import sys
-from win32api import GetSystemMetrics
+from win32api import GetSystemMetrics, GetMonitorInfo, MonitorFromPoint
 
 pygame.init()
 
-WIDTH, HEIGHT = 900, 500
+WINDOW_SIZE = GetMonitorInfo(MonitorFromPoint((0,0)))["Work"][2:4]
+WIDTH, HEIGHT = WINDOW_SIZE
 WIN = pygame.display.set_mode((WIDTH, HEIGHT), flags=pygame.RESIZABLE)
 pygame.display.set_caption("GamingX Pong")
 FULLSCREEN = False
@@ -170,7 +170,6 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel, powerups: "list[
             max_x=WIDTH * POWERUP_MAX_X_RATIO,
             min_y=(HEIGHT - TEXT_BAR_HEIGHT) * POWERUP_MIN_Y_RATIO + TEXT_BAR_HEIGHT,
             max_y=(HEIGHT - TEXT_BAR_HEIGHT) * POWERUP_MAX_Y_RATIO + TEXT_BAR_HEIGHT,
-            other_powerups_present=powerups
         ))
 
     for paddle in (red, yellow):
@@ -212,14 +211,13 @@ def main(red_handle_movement, menu: "_menu.Menu"):
             max_x=WIDTH * POWERUP_MAX_X_RATIO,
             min_y=(HEIGHT - TEXT_BAR_HEIGHT) * POWERUP_MIN_Y_RATIO + TEXT_BAR_HEIGHT,
             max_y=(HEIGHT - TEXT_BAR_HEIGHT) * POWERUP_MAX_Y_RATIO + TEXT_BAR_HEIGHT,
-            other_powerups_present=powerups
         ))
 
     running = True
     not_paused = True
     while running:
         while not_paused:
-            time1 = time.perf_counter()
+            time1 = perf_counter()
             speed = variable_speed * delta_time
 
             keys_pressed = pygame.key.get_pressed()
@@ -253,7 +251,7 @@ def main(red_handle_movement, menu: "_menu.Menu"):
                     menu.pause()
 
 
-            time2 = time.perf_counter()
+            time2 = perf_counter()
             delta_time = time2 - time1
         
         for event in pygame.event.get():

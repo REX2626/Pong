@@ -178,8 +178,8 @@ class Menu():
             pong.FULLSCREEN = False
             # Mouse moves when resizing, this keeps mouse in same relative position
             mouse_ratio = [i / j for i, j in list(zip(pygame.mouse.get_pos(), pygame.display.get_window_size()))]
-            pygame.mouse.set_pos([i * j for i, j in list(zip(mouse_ratio, (900, 500)))])
-            pygame.display.set_mode((900, 500), flags=pygame.RESIZABLE)
+            pygame.mouse.set_pos([i * j for i, j in list(zip(mouse_ratio, pong.WINDOW_SIZE))])
+            pygame.display.set_mode(pong.WINDOW_SIZE, flags=pygame.RESIZABLE)
         else:
             pong.FULLSCREEN = True
             # Mouse moves when resizing, this keeps mouse in same relative position
