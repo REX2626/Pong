@@ -72,6 +72,9 @@ class Entity():
         self.x = x
         self.y = y
 
+    def update(self, dt: float, speed: float):
+        pass
+
 
 class SquareEntity(Entity):
     def __init__(self, x, y, width, height) -> None:
@@ -91,6 +94,24 @@ class Padel(SquareEntity):
         super().__init__(x, y, width, height)
         self.moving_down = False
         self.moving_up = False
+        self.extra_height = 0
+        self.extra_height_change_rate = 0
+
+    def update(self, dt: "float", speed: "float"):
+        if self.extra_height > 0 and sign(self.extra_height_change_rate) < 0 or\
+           self.extra_height < 0 and sign(self.extra_height_change_rate) > 0:
+            self.extra_height += dt*self.extra_height_change_rate
+        else:
+            self.extra_height = 0
+
+    def get_y(self):
+        return self.y - self.extra_height/2
+
+    def get_height(self):
+        return self.height + self.extra_height
+
+    def rect(self) -> Rect:
+        return Rect(self.x, self.get_y(), self.x + self.width, self.y + self.height + self.extra_height)
 
 
 class Ball(SquareEntity):
@@ -100,6 +121,9 @@ class Ball(SquareEntity):
         self.screen_height = screen_height
         self.text_bar_height = text_bar_height
         self.restart()
+
+    def update(self, dt: "float", speed: "float"):
+        self.move(speed)
 
     def move(self, speed):
         self.x += (self.vx + self.spinx) * speed
@@ -135,8 +159,8 @@ class Ball(SquareEntity):
 
 
         if abs(intersection_vector[0]) < abs(intersection_vector[1]): # horizontal bounce
-            dist_to_centre = (self.y + self.height / 2) - (padel.y + padel.height / 2) # Distance from center of ball to centre of padel
-            self.vy = dist_to_centre / padel.height # move vertically more quickly when close to edges of paddle
+            dist_to_centre = (self.y + self.height / 2) - (padel.get_y() + padel.get_height() / 2) # Distance from center of ball to centre of padel
+            self.vy = dist_to_centre / padel.get_height() # move vertically more quickly when close to edges of paddle
             self.vx = max(1 - self.vy**2, 0.1)**0.5 * -sign(self.vx) # set vx such that the total vel is 1 and so that it is in the right direction
             # shift to the inverse of the intersection vector to escape collision
             self.x -= intersection_vector[0]
@@ -200,6 +224,11 @@ class BallPowerupEffect(PowerupEffect):
         self.ball_effect_func = ball_effect_func
 
 
+class PaddlePowerupEffect(PowerupEffect):
+    def __init__(self, paddle_effect_func) -> None:
+        self.paddle_effect_func = paddle_effect_func
+
+
 class PowerupType:
     def __init__(self, name: str, image_path: str, *, weight: int, powerup_effect: PowerupEffect, width: float=50, height: float=50) -> None:
         self.name = name
@@ -211,8 +240,8 @@ class PowerupType:
 
 class Powerup(SquareEntity):
     POWERUP_TYPES = (
-        PowerupType("test",        "./assets/test_powerup.png",   weight=0,  powerup_effect=PowerupEffect()),
-        PowerupType("speed_small", "./assets/speed_powerup1.png", weight=40, powerup_effect=BallPowerupEffect(
+        PowerupType("test",                   "./assets/test_powerup.png",             weight=0,  powerup_effect=PowerupEffect()),
+        PowerupType("speed_small",            "./assets/speed_powerup1.png",           weight=40, powerup_effect=BallPowerupEffect(
             lambda ball: (
                 setattr(ball, "vx", ball.vx*1.4),
                 setattr(ball, "vy", ball.vy*1.4),
@@ -220,7 +249,7 @@ class Powerup(SquareEntity):
                 setattr(ball, "spiny", ball.spiny*1.4)
             )
         )),
-        PowerupType("speed_big",   "./assets/speed_powerup2.png", weight=9,  powerup_effect=BallPowerupEffect(
+        PowerupType("speed_big",              "./assets/speed_powerup2.png",           weight=9,  powerup_effect=BallPowerupEffect(
             lambda ball: (
                 setattr(ball, "vx", ball.vx*2),
                 setattr(ball, "vy", ball.vy*2),
@@ -228,20 +257,26 @@ class Powerup(SquareEntity):
                 setattr(ball, "spiny", ball.spiny*2)
             )
         )),
-        PowerupType("bounce",      "./assets/bounce_powerup.png", weight=40, powerup_effect=BallPowerupEffect(
+        PowerupType("bounce",                 "./assets/bounce_powerup.png",           weight=40, powerup_effect=BallPowerupEffect(
             lambda ball: (
                 setattr(ball, "vx", ball.vx*-1),
                 setattr(ball, "spinx", ball.spinx*-1),
             )
         )),
-        PowerupType("spin_small",   "./assets/spin_powerup1.png", weight=30, powerup_effect=BallPowerupEffect(
+        PowerupType("spin_small",             "./assets/spin_powerup1.png",            weight=30, powerup_effect=BallPowerupEffect(
             lambda ball: (
                 setattr(ball, "spiny", ball.spiny + 1.0*sign(ball.spiny)),
             )
         )),
-        PowerupType("spin_big",     "./assets/spin_powerup2.png", weight=8, powerup_effect=BallPowerupEffect(
+        PowerupType("spin_big",               "./assets/spin_powerup2.png",            weight=8, powerup_effect=BallPowerupEffect(
             lambda ball: (
                 setattr(ball, "spiny", ball.spiny + 2.0*sign(ball.spiny)),
+            )
+        )),
+        PowerupType("paddle_extention_small", "./assets/paddle_extension_powerup.png", weight=30, powerup_effect=PaddlePowerupEffect(
+            lambda recent_hit_paddle, other_paddle: (
+                setattr(recent_hit_paddle, "extra_height", recent_hit_paddle.height * 0.8),
+                setattr(recent_hit_paddle, "extra_height_change_rate", - recent_hit_paddle.height * 0.8 / 8.0) # the 8 means it takes 8 seconds to revert to normal
             )
         ))
     )
