@@ -80,6 +80,7 @@ def update_playing_screen_size(menu: "_menu.Menu", red: Padel, yellow: Padel, ba
         padel.y = min(HEIGHT - PADEL_INDENT - PADEL_HEIGHT, padel.y)
     ball.screen_width = WIDTH
     ball.screen_height = HEIGHT
+    ball.text_bar_height = TEXT_BAR_HEIGHT
     ball.width, ball.height = BALL_WIDTH, BALL_HEIGHT
 
     for powerup in powerups:
