@@ -299,7 +299,7 @@ class Powerup(SquareEntity):
     def create_random(cls, screen_width, min_x, max_x, min_y, max_y, other_powerups_present: "list[Powerup]") -> "Powerup":
         powerup_type = cls.random_powerup_type()
 
-        min_x, max_x, min_y, max_y, width, height = (int(x) for x in (min_x, max_x, min_y, max_y, powerup_type.width, powerup_type.height))
+        min_x, max_x, min_y, max_y, width, height = (round(x) for x in (min_x, max_x, min_y, max_y, powerup_type.width * screen_width, powerup_type.height * screen_width)) # height is supposed to be * screen_width for ratio not a bug
         if max_x - min_x - width  < 0: raise ValueError(f"No area to place powerup of width {width} when min_x is {min_x} and max_x is {max_x}")
         if max_y - min_y - height < 0: raise ValueError(f"No area to place powerup of height {height} when min_y is {min_y} and max_y is {max_y}")
 
