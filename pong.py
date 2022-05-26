@@ -64,11 +64,7 @@ def update_playing_screen_size(menu: "_menu.Menu", red: Padel, yellow: Padel, ba
     red_ratio = (red.y + red.height / 2 - TEXT_BAR_HEIGHT - PADEL_INDENT) / (HEIGHT - TEXT_BAR_HEIGHT - 2 * PADEL_INDENT)
     yellow_ratio = (yellow.y + yellow.height / 2 - TEXT_BAR_HEIGHT - PADEL_INDENT) / (HEIGHT - TEXT_BAR_HEIGHT - 2 * PADEL_INDENT)
     WIDTH, HEIGHT = pygame.display.get_window_size()
-    menu.screen_width_button.update_text()
-    menu.screen_height_button.update_text()
-    for button in menu.all_buttons:
-        button.update()
-    update_screen_size()
+    menu.resize()
     red.width = yellow.width = PADEL_WIDTH
     red.height = yellow.height = PADEL_HEIGHT
     red.x = RED_PADEL_X
@@ -256,7 +252,7 @@ def main(red_handle_movement, menu: "_menu.Menu"):
 
             elif event.type == pygame.VIDEORESIZE:
                 update_playing_screen_size(menu, red, yellow, ball, powerups)
-                draw_window(yellow, red, ball, red_score, yellow_score, rally)
+                draw_window(yellow, red, ball, powerups, red_score, yellow_score, rally)
                 menu.pause()
 
             elif event.type == pygame.KEYDOWN and event.__dict__["key"] == pygame.K_ESCAPE:

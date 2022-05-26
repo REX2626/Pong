@@ -271,8 +271,7 @@ class SettingButton(Button):
 
     def resize_text(self):
         self.font = pygame.font.SysFont(self.font_type, round(pong.WIDTH / self.font_size))
-        self.label = self.font.render(self.get_text(), True, self.text_colour)
-        self.width = self.label.get_width()
+        self.update_text()
         self.height = self.label.get_height()
 
     def uniform_size(self, settings_dict: dict["SettingButton"]):
