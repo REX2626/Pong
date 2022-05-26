@@ -1,5 +1,5 @@
 from time import perf_counter
-from objects import Ball, Padel, Powerup, PowerupEffect, BallPowerupEffect, GameEventType, pygame
+from objects import Ball, Padel, Powerup, PowerupEffect, BallPowerupEffect, PaddlePowerupEffect, GameEventType, pygame, random
 import _menu
 import sys
 from win32api import GetSystemMetrics, GetMonitorInfo, MonitorFromPoint
@@ -115,10 +115,10 @@ def draw_window(yellow: Padel, red: Padel, ball: Ball, powerups: "list[Powerup]"
 def red_player_movement(keys_pressed, red: Padel, _, speed):
     red.moving_up = False
     red.moving_down = False
-    if keys_pressed[pygame.K_w] and red.y - speed > TEXT_BAR_HEIGHT + PADEL_INDENT:  # UP
+    if keys_pressed[pygame.K_w] and red.get_y() - speed > TEXT_BAR_HEIGHT + PADEL_INDENT:  # UP
         red.y -= speed
         red.moving_up = True
-    if keys_pressed[pygame.K_s] and red.y + speed + red.height < HEIGHT - PADEL_INDENT:  # DOWN
+    if keys_pressed[pygame.K_s] and red.get_y() + speed + red.get_height() < HEIGHT - PADEL_INDENT:  # DOWN
         red.y += speed
         red.moving_down = True
     return red
@@ -127,10 +127,10 @@ def red_player_movement(keys_pressed, red: Padel, _, speed):
 def red_bot_movement(_, red: Padel, ball: Ball, speed):
     red.moving_up = False
     red.moving_down = False
-    if ball.y + ball.height / 2 < red.y + red.height / 2 and red.y - speed > TEXT_BAR_HEIGHT + PADEL_INDENT: # If ball higher than padel - move up
+    if ball.y + ball.height / 2 < red.get_y() + red.get_height() / 2 and red.get_y() - speed > TEXT_BAR_HEIGHT + PADEL_INDENT: # If ball higher than padel - move up
         red.y -= speed
         red.moving_up = True
-    elif ball.y + ball.height / 2 > red.y + red.height / 2 and red.y + speed + red.height < HEIGHT - PADEL_INDENT: # If ball lower than padel - move down
+    elif ball.y + ball.height / 2 > red.get_y() + red.get_height() / 2 and red.get_y() + speed + red.get_height() < HEIGHT - PADEL_INDENT: # If ball lower than padel - move down
         red.y += speed
         red.moving_down = True
     return red
@@ -139,20 +139,22 @@ def red_bot_movement(_, red: Padel, ball: Ball, speed):
 def yellow_handle_movement(keys_pressed, yellow: Padel, speed):
     yellow.moving_up = False
     yellow.moving_down = False
-    if keys_pressed[pygame.K_UP] and yellow.y - speed > TEXT_BAR_HEIGHT + PADEL_INDENT:  # UP
+    if keys_pressed[pygame.K_UP] and yellow.get_y() - speed > TEXT_BAR_HEIGHT + PADEL_INDENT:  # UP
         yellow.y -= speed
         yellow.moving_up = True
-    if keys_pressed[pygame.K_DOWN] and yellow.y + speed + yellow.height < HEIGHT - PADEL_INDENT:  # DOWN
+    if keys_pressed[pygame.K_DOWN] and yellow.get_y() + speed + yellow.get_height() < HEIGHT - PADEL_INDENT:  # DOWN
         yellow.y += speed
         yellow.moving_down = True
     return yellow
 
 
-def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel, powerups: "list[Powerup]", speed):
+def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel, powerups: "list[Powerup]", speed, dt: "float"):
     global variable_speed
     global last_collided
     game_event = GameEventType.NONE
-    ball.move(speed)
+    
+    for entity in [ball, yellow, red] + powerups:
+        entity.update(dt, speed)
 
     for powerup in powerups:
         ball_hit_powerup = powerup.handle_collisions(ball)
@@ -161,6 +163,10 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel, powerups: "list[
         effect = powerup.powerup_type.powerup_effect
         if isinstance(effect, BallPowerupEffect):
             effect.ball_effect_func(ball)
+        elif isinstance(effect, PaddlePowerupEffect):
+            recent_hit_paddle = last_collided if last_collided is not None else random.choice([red, yellow])
+            other_paddle = red if recent_hit_paddle == red else yellow
+            effect.paddle_effect_func(recent_hit_paddle, other_paddle)
 
         powerups.remove(powerup)
         powerups.append(Powerup.create_random(
@@ -204,7 +210,7 @@ def main(red_handle_movement, menu: "_menu.Menu"):
     ball = Ball(WIDTH, HEIGHT, BALL_WIDTH, BALL_HEIGHT, TEXT_BAR_HEIGHT)
 
     powerups: "list[Powerup]" = []
-    for _ in range(3):
+    for _ in range(20):
         powerups.append(Powerup.create_random(
             min_x=WIDTH * POWERUP_MIN_X_RATIO,
             max_x=WIDTH * POWERUP_MAX_X_RATIO,
@@ -224,7 +230,7 @@ def main(red_handle_movement, menu: "_menu.Menu"):
             red = red_handle_movement(keys_pressed, red, ball, speed)
             yellow = yellow_handle_movement(keys_pressed, yellow, speed)
 
-            game_event = handle_ball_movement(ball, yellow, red, powerups, speed)
+            game_event = handle_ball_movement(ball, yellow, red, powerups, speed, delta_time)
             if game_event == GameEventType.RED:
                 red_score += 1
                 rally = 0
