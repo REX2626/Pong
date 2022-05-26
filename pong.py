@@ -170,6 +170,7 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel, powerups: "list[
             max_x=WIDTH * POWERUP_MAX_X_RATIO,
             min_y=(HEIGHT - TEXT_BAR_HEIGHT) * POWERUP_MIN_Y_RATIO + TEXT_BAR_HEIGHT,
             max_y=(HEIGHT - TEXT_BAR_HEIGHT) * POWERUP_MAX_Y_RATIO + TEXT_BAR_HEIGHT,
+            other_powerups_present=powerups
         ))
 
     for paddle in (red, yellow):
@@ -211,6 +212,7 @@ def main(red_handle_movement, menu: "_menu.Menu"):
             max_x=WIDTH * POWERUP_MAX_X_RATIO,
             min_y=(HEIGHT - TEXT_BAR_HEIGHT) * POWERUP_MIN_Y_RATIO + TEXT_BAR_HEIGHT,
             max_y=(HEIGHT - TEXT_BAR_HEIGHT) * POWERUP_MAX_Y_RATIO + TEXT_BAR_HEIGHT,
+            other_powerups_present=powerups
         ))
 
     running = True
