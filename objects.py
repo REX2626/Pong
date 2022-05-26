@@ -1,6 +1,7 @@
 import random
 from enum import Enum
 import pygame
+import math
 
 
 class GameEventType(Enum):
@@ -37,6 +38,9 @@ class Rect():
     def bot_r(self) -> "tuple(float, float)":
         return (self.brx, self.bry)
 
+    def corners(self) -> "tuple(tuple(float, float))":
+        return (self.top_l(), self.top_r(), self.bot_l(), self.bot_r())
+
     def width(self) -> "float":
         '''(can return negative numbers)'''
         return self.brx - self.tlx
@@ -45,12 +49,18 @@ class Rect():
         '''(can return negative numbers)'''
         return self.bry - self.tly
 
-    def draw(self, window, colour):
+    def draw(self, window: "pygame.Surface", colour):
         pygame.draw.rect(window, colour, [self.tlx, self.tly, self.width(), self.height()])
 
 
 def sub_points(point_a: "tuple(float, float)", point_b: "tuple(float, float)") -> "tuple(float, float)":
     return tuple(point_a[i] - point_b[i] for i in (0, 1))
+
+def point_sqrlength(point: "tuple(float, float)"):
+    return point[0]*point[0] + point[1]*point[1]
+
+def point_min_abs_component(point: "tuple(float, float)"):
+    return min(abs(point[i]) for i in (0, 1))
 
 def sign(x):
     if x >= 0: return 1
@@ -111,13 +121,18 @@ class Ball(SquareEntity):
         collides_with_padel = sr.intersects_other_rect(pr) # check we do have a collision
         if not collides_with_padel: return
 
-        # this is the vector from the corner of the paddle to the corner of the ball at the intersection
-        intersection_vector = min(
-            sub_points(sr.bot_r(), pr.top_l()),
-            sub_points(sr.bot_l(), pr.top_r()),
-            sub_points(sr.top_r(), pr.bot_l()),
-            sub_points(sr.top_l(), pr.bot_r()),
-        key=lambda vector: vector[0]*vector[0] + vector[1]*vector[1]) # (pick vector with smallest magnitude)
+        # this finds the vector from a corner of the paddle to
+        # the corner of the ball, with the smallest length of
+        # it's minimum component i.e. the one which enforces the
+        # smallest change on the ball's position in order to
+        # resolve the collision
+        intersection_vector = (math.inf, math.inf)
+        for self_corner in self.rect().corners():
+            for other_corner in padel.rect().corners():
+                potential_new_intersection_vector = sub_points(self_corner, other_corner)
+                if point_min_abs_component(potential_new_intersection_vector) < point_min_abs_component(intersection_vector):
+                    intersection_vector = potential_new_intersection_vector
+
 
         if abs(intersection_vector[0]) < abs(intersection_vector[1]): # horizontal bounce
             dist_to_centre = (self.y + self.height / 2) - (padel.y + padel.height / 2) # Distance from center of ball to centre of padel
