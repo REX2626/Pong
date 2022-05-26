@@ -96,7 +96,7 @@ def update_playing_screen_size(menu: "_menu.Menu", red: Padel, yellow: Padel, ba
         powerup.y = min(HEIGHT - powerup.height, powerup.y)
         ## Resize powerup image ##
         powerup.image = pygame.image.load(powerup.powerup_type.image_path)
-        powerup.image = pygame.transform.scale(powerup.image, (powerup.width, powerup.height)).convert()
+        powerup.image = pygame.transform.scale(powerup.image, (powerup.width, powerup.height)).convert_alpha()
 
 
 def get_ball_colour(rally):
@@ -229,7 +229,7 @@ def main(red_handle_movement, menu: "_menu.Menu"):
     ball = Ball(WIDTH, HEIGHT, BALL_WIDTH, BALL_HEIGHT, TEXT_BAR_HEIGHT)
 
     powerups: "list[Powerup]" = []
-    for _ in range(5):
+    for _ in range(500):
         powerups.append(Powerup.create_random(
             screen_width=WIDTH,
             min_x=WIDTH * POWERUP_MIN_X_RATIO,
