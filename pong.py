@@ -7,15 +7,13 @@ import sys
 pygame.init()
 
 WIDTH, HEIGHT = 900, 500
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+WIN = pygame.display.set_mode((WIDTH, HEIGHT), flags=pygame.RESIZABLE)
 pygame.display.set_caption("GamingX Pong")
 FULLSCREEN = False
 
 SPEED = 230
 variable_speed = SPEED
 last_collided = None
-score_font = pygame.font.SysFont("comicsans", 20)
-TEXT_BAR_HEIGHT = score_font.get_height()
 
 WHITE = (255, 255, 255)
 LIGHT_GREY = (120, 120, 120)
@@ -34,14 +32,37 @@ DASHED_WIDTH = 4
 BALL_WIDTH, BALL_HEIGHT = 8, 8
 
 def update_screen_size():
-    global RED_PADEL_X, YELLOW_PADEL_X, PADEL_Y, DASHED_X, DASHED_LENGTH
+    global RED_PADEL_X, YELLOW_PADEL_X, PADEL_Y, DASHED_X, DASHED_LENGTH, SCORE_FONT, TEXT_BAR_HEIGHT
+    SCORE_FONT = pygame.font.SysFont("comicsans", round(WIDTH / 45))
+    TEXT_BAR_HEIGHT = SCORE_FONT.get_height()
     RED_PADEL_X = PADEL_SIDE_INDENT
     YELLOW_PADEL_X = WIDTH - PADEL_SIDE_INDENT - PADEL_WIDTH
     PADEL_Y = TEXT_BAR_HEIGHT + (HEIGHT - TEXT_BAR_HEIGHT) / 2 - PADEL_HEIGHT / 2
-    DASHED_X = WIDTH / 2 - DASHED_WIDTH / 2
+    DASHED_X = round(WIDTH / 2 - DASHED_WIDTH / 2)
     DASHED_LENGTH = (HEIGHT - TEXT_BAR_HEIGHT - 2 * PADEL_INDENT) / 9
 
 update_screen_size()
+
+
+def update_playing_screen_size(menu: "_menu.Menu", red: Padel, yellow: Padel, ball: Ball):
+    global WIDTH, HEIGHT
+    red_ratio = (red.y + red.height / 2 - TEXT_BAR_HEIGHT - PADEL_INDENT) / (HEIGHT - TEXT_BAR_HEIGHT - 2 * PADEL_INDENT)
+    yellow_ratio = (yellow.y + yellow.height / 2 - TEXT_BAR_HEIGHT - PADEL_INDENT) / (HEIGHT - TEXT_BAR_HEIGHT - 2 * PADEL_INDENT)
+    WIDTH, HEIGHT = pygame.display.get_window_size()
+    menu.screen_width_button.update_text()
+    menu.screen_height_button.update_text()
+    for button in menu.all_buttons:
+        button.update()
+    update_screen_size()
+    red.x = RED_PADEL_X
+    yellow.x = YELLOW_PADEL_X
+    red.y = red_ratio * (HEIGHT - TEXT_BAR_HEIGHT - 2 * PADEL_INDENT) + TEXT_BAR_HEIGHT + PADEL_INDENT - red.height / 2
+    yellow.y = yellow_ratio * (HEIGHT - TEXT_BAR_HEIGHT - 2 * PADEL_INDENT) + TEXT_BAR_HEIGHT + PADEL_INDENT - yellow.height / 2
+    for padel in (red, yellow):
+        padel.y = max(TEXT_BAR_HEIGHT + PADEL_INDENT, padel.y)
+        padel.y = min(HEIGHT - PADEL_INDENT - PADEL_HEIGHT, padel.y)
+    ball.screen_width = WIDTH
+    ball.screen_height = HEIGHT
 
 
 def get_ball_colour(rally):
@@ -50,7 +71,7 @@ def get_ball_colour(rally):
 
 def draw_dashed_line():
     for i in range(0, 10, 2):
-        pygame.draw.rect(WIN, WHITE, (DASHED_X, TEXT_BAR_HEIGHT + PADEL_INDENT + i*DASHED_LENGTH, DASHED_WIDTH, DASHED_LENGTH))
+        pygame.draw.rect(WIN, WHITE, (DASHED_X, round(TEXT_BAR_HEIGHT + PADEL_INDENT + i*DASHED_LENGTH), DASHED_WIDTH, round(DASHED_LENGTH)))
     
 def draw_window(yellow: Padel, red: Padel, ball: Ball, red_score, yellow_score, rally):
     WIN.fill(BLACK)
@@ -60,9 +81,9 @@ def draw_window(yellow: Padel, red: Padel, ball: Ball, red_score, yellow_score, 
     yellow.draw(WIN, pygame.draw, YELLOW)
     ball.draw(WIN, pygame.draw, get_ball_colour(rally))
 
-    red_score_label = score_font.render(f"RED: {red_score}", True, WHITE)
-    yellow_score_label = score_font.render(f"YELLOW: {yellow_score}", True, WHITE)
-    rally_score_label = score_font.render(f"RALLY: {rally}", True, LIGHT_GREY)
+    red_score_label = SCORE_FONT.render(f"RED: {red_score}", True, WHITE)
+    yellow_score_label = SCORE_FONT.render(f"YELLOW: {yellow_score}", True, WHITE)
+    rally_score_label = SCORE_FONT.render(f"RALLY: {rally}", True, LIGHT_GREY)
 
     WIN.blit(red_score_label, (PADEL_INDENT, 0))
     WIN.blit(yellow_score_label, (WIDTH - yellow_score_label.get_width() - PADEL_INDENT, 0))
@@ -133,7 +154,7 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel, speed):
     return game_event
 
 
-def main(red_handle_movement, menu):
+def main(red_handle_movement, menu: "_menu.Menu"):
     delta_time = 0
 
     red_score = 0
@@ -175,6 +196,9 @@ def main(red_handle_movement, menu):
                     pygame.quit()
                     sys.exit()
 
+                elif event.type == pygame.VIDEORESIZE:
+                    update_playing_screen_size(menu, red, yellow, ball)
+
                 elif event.type == pygame.KEYDOWN and event.__dict__["key"] == pygame.K_ESCAPE:
                     not_paused = False
                     menu.pause()
@@ -189,13 +213,18 @@ def main(red_handle_movement, menu):
                 running = False
                 pygame.quit()
 
+            elif event.type == pygame.VIDEORESIZE:
+                update_playing_screen_size(menu, red, yellow, ball)
+                draw_window(yellow, red, ball, red_score, yellow_score, rally)
+                menu.pause()
+
             elif event.type == pygame.KEYDOWN and event.__dict__["key"] == pygame.K_ESCAPE:
                 not_paused = True
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse = pygame.mouse.get_pos()
-                menu.mouse_click(mouse)
-                running = False
+                if menu.mouse_click(mouse):
+                    running = False
 
 
 def main_menu():
@@ -209,7 +238,10 @@ def main_menu():
                 run = False
                 pygame.quit()
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.VIDEORESIZE:
+                menu.resize()
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse = pygame.mouse.get_pos()
                 menu.mouse_click(mouse)
 

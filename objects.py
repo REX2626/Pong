@@ -48,9 +48,6 @@ class Rect():
         pygame_draw_module.rect(window, colour, [self.tlx, self.tly, self.width(), self.height()])
 
 
-def add_points(point_a: "tuple(float, float)", point_b: "tuple(float, float)") -> "tuple(float, float)":
-    return tuple(point_a[i] + point_b[i] for i in (0, 1))
-
 def sub_points(point_a: "tuple(float, float)", point_b: "tuple(float, float)") -> "tuple(float, float)":
     return tuple(point_a[i] - point_b[i] for i in (0, 1))
 
