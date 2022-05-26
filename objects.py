@@ -231,7 +231,7 @@ class PaddlePowerupEffect(PowerupEffect):
 
 
 class PowerupType:
-    def __init__(self, name: str, image_path: str, *, weight: int, powerup_effect: PowerupEffect, width: float=50, height: float=50) -> None:
+    def __init__(self, name: str, image_path: str, *, weight: int, powerup_effect: PowerupEffect, width: float=0.05, height: float=0.05) -> None:
         self.name = name
         self.image_path = image_path
         self.weight = weight
@@ -282,8 +282,8 @@ class Powerup(SquareEntity):
         ))
     )
 
-    def __init__(self, x, y, powerup_type: PowerupType) -> None:
-        super().__init__(x, y, powerup_type.width, powerup_type.height)
+    def __init__(self, x, y, screen_width,powerup_type: PowerupType) -> None:
+        super().__init__(x, y, powerup_type.width * screen_width, powerup_type.height * screen_width) # height * screen_width not a bug, ratio of width to height should be same
         self.powerup_type = powerup_type
 
     @classmethod
@@ -296,7 +296,7 @@ class Powerup(SquareEntity):
         )[0] # indexed at 0 because this returns a list, but it is only 1 element as k=1
 
     @classmethod
-    def create_random(cls, min_x, max_x, min_y, max_y, other_powerups_present: "list[Powerup]") -> "Powerup":
+    def create_random(cls, screen_width, min_x, max_x, min_y, max_y, other_powerups_present: "list[Powerup]") -> "Powerup":
         powerup_type = cls.random_powerup_type()
 
         min_x, max_x, min_y, max_y, width, height = (int(x) for x in (min_x, max_x, min_y, max_y, powerup_type.width, powerup_type.height))
@@ -307,6 +307,7 @@ class Powerup(SquareEntity):
             new_powerup = Powerup(
                 x=random.randrange(min_x, max_x - width),
                 y=random.randrange(min_y, max_y - height),
+                screen_width=screen_width,
                 powerup_type=powerup_type
             )
             passed = True
@@ -328,5 +329,5 @@ class Powerup(SquareEntity):
     def draw(self, window: "pygame.Surface"):
         if not hasattr(self, "image"):
             self.image = pygame.image.load(self.powerup_type.image_path)
-            self.image = pygame.transform.scale(self.image, (self.width, self.height))
+            self.image = pygame.transform.scale(self.image, (self.width, self.height)).convert()
         window.blit(self.image, [self.x, self.y])

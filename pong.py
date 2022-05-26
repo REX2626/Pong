@@ -30,6 +30,7 @@ PADEL_WIDTH, PADEL_HEIGHT = 13, 55
 PADEL_INDENT = 10
 PADEL_SIDE_INDENT = 80
 
+POWERUP_SIZE = 50
 POWERUP_MIN_X_RATIO = 0.30
 POWERUP_MAX_X_RATIO = 1 - POWERUP_MIN_X_RATIO
 POWERUP_MIN_Y_RATIO = 0.05
@@ -60,6 +61,9 @@ def update_playing_screen_size(menu: "_menu.Menu", red: Padel, yellow: Padel, ba
     global WIDTH, HEIGHT
     red_ratio = (red.y + red.height / 2 - TEXT_BAR_HEIGHT - PADEL_INDENT) / (HEIGHT - TEXT_BAR_HEIGHT - 2 * PADEL_INDENT)
     yellow_ratio = (yellow.y + yellow.height / 2 - TEXT_BAR_HEIGHT - PADEL_INDENT) / (HEIGHT - TEXT_BAR_HEIGHT - 2 * PADEL_INDENT)
+    powerup_ratio_x = [(powerup.x + powerup.width / 2) / WIDTH for powerup in powerups]
+    powerup_ratio_y = [(powerup.y + powerup.height / 2 - TEXT_BAR_HEIGHT) / (HEIGHT - TEXT_BAR_HEIGHT) for powerup in powerups]
+
     WIDTH, HEIGHT = pygame.display.get_window_size()
     menu.resize()
     red.width = yellow.width = PADEL_WIDTH
@@ -68,17 +72,23 @@ def update_playing_screen_size(menu: "_menu.Menu", red: Padel, yellow: Padel, ba
     yellow.x = YELLOW_PADEL_X
     red.y = red_ratio * (HEIGHT - TEXT_BAR_HEIGHT - 2 * PADEL_INDENT) + TEXT_BAR_HEIGHT + PADEL_INDENT - red.height / 2
     yellow.y = yellow_ratio * (HEIGHT - TEXT_BAR_HEIGHT - 2 * PADEL_INDENT) + TEXT_BAR_HEIGHT + PADEL_INDENT - yellow.height / 2
+
     for padel in (red, yellow):
         padel.y = max(TEXT_BAR_HEIGHT + PADEL_INDENT, padel.y)
         padel.y = min(HEIGHT - PADEL_INDENT - PADEL_HEIGHT, padel.y)
+
     ball.screen_width = WIDTH
     ball.screen_height = HEIGHT
     ball.text_bar_height = TEXT_BAR_HEIGHT
     ball.width, ball.height = BALL_WIDTH, BALL_HEIGHT
 
-    for powerup in powerups:
-        # TODO: update powerup positions in a correct way
-        pass
+    for idx, powerup in enumerate(powerups):
+        powerup.width = powerup.powerup_type.width * WIDTH
+        powerup.height = powerup.powerup_type.height * WIDTH # This is WIDTH as well to make the ratio same as for the width, not a bug
+        powerup.x = powerup_ratio_x[idx] * WIDTH - powerup.width / 2
+        powerup.y = powerup_ratio_y[idx] * (HEIGHT - TEXT_BAR_HEIGHT) + TEXT_BAR_HEIGHT - powerup.height / 2
+        powerup.image = pygame.image.load(powerup.powerup_type.image_path)
+        powerup.image = pygame.transform.scale(powerup.image, (powerup.width, powerup.height)).convert()
 
 
 def get_ball_colour(rally):
@@ -170,6 +180,7 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel, powerups: "list[
 
         powerups.remove(powerup)
         powerups.append(Powerup.create_random(
+            screen_width=WIDTH,
             min_x=WIDTH * POWERUP_MIN_X_RATIO,
             max_x=WIDTH * POWERUP_MAX_X_RATIO,
             min_y=(HEIGHT - TEXT_BAR_HEIGHT) * POWERUP_MIN_Y_RATIO + TEXT_BAR_HEIGHT,
@@ -212,6 +223,7 @@ def main(red_handle_movement, menu: "_menu.Menu"):
     powerups: "list[Powerup]" = []
     for _ in range(5):
         powerups.append(Powerup.create_random(
+            screen_width=WIDTH,
             min_x=WIDTH * POWERUP_MIN_X_RATIO,
             max_x=WIDTH * POWERUP_MAX_X_RATIO,
             min_y=(HEIGHT - TEXT_BAR_HEIGHT) * POWERUP_MIN_Y_RATIO + TEXT_BAR_HEIGHT,
