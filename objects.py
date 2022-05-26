@@ -329,5 +329,5 @@ class Powerup(SquareEntity):
     def draw(self, window: "pygame.Surface"):
         if not hasattr(self, "image"):
             self.image = pygame.image.load(self.powerup_type.image_path)
-            self.image = pygame.transform.scale(self.image, (self.width, self.height)).convert()
+            self.image = pygame.transform.scale(self.image, (self.width, self.height)).convert_alpha()
         window.blit(self.image, [self.x, self.y])
