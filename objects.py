@@ -103,6 +103,7 @@ class Padel(SquareEntity):
             self.extra_height += dt*self.extra_height_change_rate
         else:
             self.extra_height = 0
+            self.extra_height_change_rate = 0
 
     def get_y(self):
         return self.y - self.extra_height/2
@@ -275,8 +276,8 @@ class Powerup(SquareEntity):
         )),
         PowerupType("paddle_extention_small", "./assets/paddle_extension_powerup.png", weight=30, powerup_effect=PaddlePowerupEffect(
             lambda recent_hit_paddle, other_paddle: (
-                setattr(recent_hit_paddle, "extra_height", recent_hit_paddle.height * 0.8),
-                setattr(recent_hit_paddle, "extra_height_change_rate", - recent_hit_paddle.height * 0.8 / 8.0) # the 8 means it takes 8 seconds to revert to normal
+                setattr(recent_hit_paddle, "extra_height", recent_hit_paddle.extra_height + recent_hit_paddle.height * 0.8),
+                setattr(recent_hit_paddle, "extra_height_change_rate", recent_hit_paddle.extra_height_change_rate*0.5 - recent_hit_paddle.height * 0.8 / 8.0) # the 8 means it takes 8 seconds to revert to normal
             )
         ))
     )
