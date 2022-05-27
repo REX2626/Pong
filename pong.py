@@ -216,6 +216,11 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel, powerups: "list[
     return game_event
 
 
+def quit():
+    pygame.quit()
+    sys.exit(0)
+
+
 def main(red_handle_movement, menu: "_menu.Menu"):
     delta_time = 0
 
@@ -266,8 +271,7 @@ def main(red_handle_movement, menu: "_menu.Menu"):
                 if event.type == pygame.QUIT:
                     not_paused = False
                     running = False
-                    pygame.quit()
-                    sys.exit()
+                    quit()
 
                 elif event.type == pygame.VIDEORESIZE:
                     update_playing_screen_size(menu, red, yellow, ball, powerups)
@@ -282,9 +286,7 @@ def main(red_handle_movement, menu: "_menu.Menu"):
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                not_paused = False
-                running = False
-                pygame.quit()
+                quit()
 
             elif event.type == pygame.VIDEORESIZE:
                 update_playing_screen_size(menu, red, yellow, ball, powerups)
@@ -308,8 +310,7 @@ def main_menu():
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                run = False
-                pygame.quit()
+                quit()
 
             elif event.type == pygame.VIDEORESIZE:
                 menu.resize()

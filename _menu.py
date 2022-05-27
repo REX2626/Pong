@@ -15,7 +15,7 @@ class Menu():
         self.singleplayer_button =         Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 6 * 2, lambda: pong.main(pong.red_bot_movement, self)        , "SINGLE PLAYER", pong.WHITE, self.box_colour, "comicsans", 40)
         self.multiplayer_button =          Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 6 * 3, lambda: pong.main(pong.red_player_movement, self)     , "MULTIPLAYER"  , pong.WHITE, self.box_colour, "comicsans", 40)
         self.settings_button =             Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 6 * 4, self.settings                                         , "SETTINGS"     , pong.WHITE, self.box_colour, "comicsans", 40)
-        self.quit_button =                 Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 6 * 5, self.quit                                             , "QUIT"         , pong.WHITE, self.box_colour, "comicsans", 40)
+        self.quit_button =                 Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 6 * 5, pong.quit                                             , "QUIT"         , pong.WHITE, self.box_colour, "comicsans", 40)
 
         self.screen_width_button =  SettingButton(lambda: pong.WIDTH / 4    , lambda: pong.HEIGHT / 6    , lambda: self.chosen_setting(self.screen_width_button) , lambda: f"SCREEN WIDTH: {pong.WIDTH}"       , pong.WHITE, self.box_colour, "comicsans", 40)
         self.screen_height_button = SettingButton(lambda: pong.WIDTH / 4 * 3, lambda: pong.HEIGHT / 6    , lambda: self.chosen_setting(self.screen_height_button), lambda: f"SCREEN HEIGHT: {pong.HEIGHT}"     , pong.WHITE, self.box_colour, "comicsans", 40)
@@ -65,10 +65,6 @@ class Menu():
         self.buttons = [self.back_to_menu_button]
         self.draw_menu()
 
-    def quit(self):
-        pygame.quit()
-        sys.exit()
-
     def resize(self):
         pong.WIDTH, pong.HEIGHT = pygame.display.get_window_size()
         pong.update_screen_size()
@@ -89,7 +85,7 @@ class Menu():
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    self.quit()
+                    pong.quit()
 
                 elif event.type == pygame.WINDOWSIZECHANGED:
                     self.resize()
@@ -214,7 +210,7 @@ class Menu():
         self.draw_menu(self.background_colour)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.quit()
+                pong.quit()
 
             elif event.type == pygame.VIDEORESIZE:
                 self.resize()
