@@ -1,7 +1,6 @@
 from time import perf_counter
 import pygame
 import pong
-import sys
 
 class Menu():
     def __init__(self) -> None:
@@ -11,11 +10,12 @@ class Menu():
         self.box_colour = pong.MEDIUM_GREY
         self.setting_chosen = None
 
-        self.title_text =                  Widget(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 6    , "Gaming X Pong", pong.WHITE, "comicsans", 40)
-        self.singleplayer_button =         Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 6 * 2, lambda: pong.main(pong.red_bot_movement, self)        , "SINGLE PLAYER", pong.WHITE, self.box_colour, "comicsans", 40)
-        self.multiplayer_button =          Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 6 * 3, lambda: pong.main(pong.red_player_movement, self)     , "MULTIPLAYER"  , pong.WHITE, self.box_colour, "comicsans", 40)
-        self.settings_button =             Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 6 * 4, self.settings                                         , "SETTINGS"     , pong.WHITE, self.box_colour, "comicsans", 40)
-        self.quit_button =                 Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 6 * 5, pong.quit                                             , "QUIT"         , pong.WHITE, self.box_colour, "comicsans", 40)
+        self.title_text =                  Widget(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 7    , "Gaming X Pong", pong.WHITE, "comicsans", 40)
+        self.singleplayer_button =         Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 7 * 2, lambda: pong.main(pong.red_bot_movement, self)        , "SINGLE PLAYER", pong.WHITE, self.box_colour, "comicsans", 40)
+        self.multiplayer_button =          Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 7 * 3, lambda: pong.main(pong.red_player_movement, self)     , "MULTIPLAYER"  , pong.WHITE, self.box_colour, "comicsans", 40)
+        self.settings_button =             Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 7 * 4, self.settings                                         , "SETTINGS"     , pong.WHITE, self.box_colour, "comicsans", 40)
+        self.info_button =                 Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 7 * 5, self.info                                             , "INFO"         , pong.WHITE, self.box_colour, "comicsans", 40)
+        self.quit_button =                 Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 7 * 6, pong.quit                                             , "QUIT"         , pong.WHITE, self.box_colour, "comicsans", 40)
 
         self.screen_width_button =  SettingButton(lambda: pong.WIDTH / 4    , lambda: pong.HEIGHT / 6    , lambda: self.chosen_setting(self.screen_width_button) , lambda: f"SCREEN WIDTH: {pong.WIDTH}"       , pong.WHITE, self.box_colour, "comicsans", 40)
         self.screen_height_button = SettingButton(lambda: pong.WIDTH / 4 * 3, lambda: pong.HEIGHT / 6    , lambda: self.chosen_setting(self.screen_height_button), lambda: f"SCREEN HEIGHT: {pong.HEIGHT}"     , pong.WHITE, self.box_colour, "comicsans", 40)
@@ -40,11 +40,33 @@ class Menu():
         for button in self.settings_dict:
             button.uniform_size(self.settings_dict)
 
+        self.credit_title =   Widget(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 8    , "CREDITS"     , pong.WHITE, "comicsans", 40)
+        self.credit_text =      Text(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 8 * 2, """
+                                                                                          Rex Attwood
+                                                                                          Freddie Weir
+                                                                                          """ , pong.WHITE, "comicsans", 20)
+        self.controls_title = Widget(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 8 * 3, "CONTROLS"     , pong.WHITE, "comicsans", 40)
+        self.controls_text =    Text(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 8 * 4.7, """
+                                                                                          RED PADDLE UP: W
+                                                                                          RED PADDLE DOWN:S
+                                                                                          YELLOW PADDLE UP: UP ARROW
+                                                                                          YELLOW PADDLE DOWN: DOWN ARROW
+                                                                                          CHANGE SETTINGS: UP AND DOWN ARROWS
+                                                                                          PAUSE: ESC
+                                                                                          """ , pong.WHITE, "comicsans", 20)
+
+        self.info_widgets = [
+            self.credit_title,
+            self.credit_text,
+            self.controls_title,
+            self.controls_text
+        ]
+
         self.back_to_menu_button = Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 2, lambda: self.main_menu(), "MAIN MENU", pong.WHITE, self.box_colour, "comicsans", 40)
 
         self.text_widgets = [self.title_text]
-        self.buttons = [self.singleplayer_button, self.multiplayer_button, self.settings_button, self.quit_button]
-        self.all_widgets: list[Widget, Button, SettingButton] = self.text_widgets + self.buttons + [*self.settings_dict.keys()] + [self.back_to_menu_button]
+        self.buttons = [self.singleplayer_button, self.multiplayer_button, self.settings_button, self.info_button, self.quit_button]
+        self.all_widgets: list[Widget, Button, SettingButton] = self.text_widgets + self.info_widgets + self.buttons + [*self.settings_dict.keys()] + [self.back_to_menu_button]
 
     def mouse_click(self, mouse):
         for button in self.buttons:
@@ -141,6 +163,24 @@ class Menu():
         self.draw_menu()
         self.setting_chosen = setting
 
+    def info(self):
+        self.back_to_menu_button.get_y = lambda: pong.HEIGHT / 6 * 5
+        self.back_to_menu_button.update()
+        self.text_widgets = self.info_widgets
+        self.buttons = [self.back_to_menu_button]
+        self.draw_menu(self.background_colour)
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pong.quit()
+
+                elif event.type == pygame.WINDOWSIZECHANGED:
+                    self.resize()
+
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse = pygame.mouse.get_pos()
+                    self.mouse_click(mouse)
+
     def change_screen_width(self, change):
         pong.WIDTH = max(0, pong.WIDTH + change)
         for widget in self.all_widgets:
@@ -206,7 +246,7 @@ class Menu():
         self.back_to_menu_button.get_y = lambda: pong.HEIGHT / 2
         self.back_to_menu_button.update()
         self.text_widgets = [self.title_text]
-        self.buttons = [self.singleplayer_button, self.multiplayer_button, self.settings_button, self.quit_button]
+        self.buttons = [self.singleplayer_button, self.multiplayer_button, self.settings_button, self.info_button, self.quit_button]
         self.draw_menu(self.background_colour)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -248,6 +288,24 @@ class Widget():
 
     def draw(self):
         pong.WIN.blit(self.label, (round(self.x + (self.width - self.label.get_width()) / 2), round(self.y)))
+
+
+
+class Text(Widget):
+    def __init__(self, get_x, get_y, text: str, text_colour, font, font_size) -> None:
+        super().__init__(get_x, get_y, text, text_colour, font, font_size)
+        self.text = [sentence.lstrip() for sentence in text.split("\n")]
+        self.labels = [self.font.render(sentence, True, text_colour) for sentence in self.text]
+
+    def resize_text(self):
+        self.font = pygame.font.SysFont(self.font_type, round(pong.WIDTH / self.font_size))
+        self.labels = [self.font.render(sentence, True, self.text_colour) for sentence in self.text]
+        self.width = max([label.get_width() for label in self.labels])
+        self.height = sum([label.get_height() for label in self.labels])
+
+    def draw(self):
+        for idx, label in enumerate(self.labels):
+            pong.WIN.blit(label, (round(self.x + (self.width - label.get_width()) / 2), round(self.y + idx * label.get_height())))
 
 
 
