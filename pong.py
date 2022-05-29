@@ -2,16 +2,15 @@ from time import perf_counter
 from objects import Ball, Padel, Powerup, PowerupEffect, BallPowerupEffect, PaddlePowerupEffect, GameEventType, pygame, random
 import _menu
 import sys
-from win32api import GetSystemMetrics, GetMonitorInfo, MonitorFromPoint
 
 pygame.init()
 
-WINDOW_SIZE = GetMonitorInfo(MonitorFromPoint((0,0)))["Work"][2:4]
-WIDTH, HEIGHT = WINDOW_SIZE
-WIN = pygame.display.set_mode((WIDTH, HEIGHT), flags=pygame.RESIZABLE)
+WIN = pygame.display.set_mode(flags=pygame.FULLSCREEN+pygame.RESIZABLE)
 pygame.display.set_caption("GamingX Pong")
-FULLSCREEN = False
-FULLSCREEN_SIZE = GetSystemMetrics(0), GetSystemMetrics(1)
+WIDTH, HEIGHT = pygame.display.get_window_size()
+FULLSCREEN = True
+FULLSCREEN_SIZE = WIDTH, HEIGHT
+WINDOW_SIZE = WIDTH * 0.8, HEIGHT * 0.8
 SIZE_LINK = True
 
 SPEED = 230
