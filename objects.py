@@ -2,6 +2,8 @@ import random
 from enum import Enum
 import pygame
 import math
+import os
+import sys
 
 
 class GameEventType(Enum):
@@ -216,6 +218,17 @@ class Ball(SquareEntity):
         self.ball_has_hit_side = False
 
 
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+
 class PowerupEffect:
     pass
 
@@ -328,6 +341,6 @@ class Powerup(SquareEntity):
 
     def draw(self, window: "pygame.Surface"):
         if not hasattr(self, "image"):
-            self.image = pygame.image.load(self.powerup_type.image_path)
+            self.image = pygame.image.load(resource_path(self.powerup_type.image_path))
             self.image = pygame.transform.scale(self.image, (self.width, self.height)).convert_alpha()
         window.blit(self.image, [self.x, self.y])
