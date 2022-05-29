@@ -151,12 +151,12 @@ class Ball(SquareEntity):
         # it's minimum component i.e. the one which enforces the
         # smallest change on the ball's position in order to
         # resolve the collision
-        intersection_vector = (math.inf, math.inf)
-        for self_corner in self.rect().corners():
-            for other_corner in padel.rect().corners():
-                potential_new_intersection_vector = sub_points(self_corner, other_corner)
-                if point_min_abs_component(potential_new_intersection_vector) < point_min_abs_component(intersection_vector):
-                    intersection_vector = potential_new_intersection_vector
+        intersection_vector = min(
+            sub_points(sr.bot_r(), pr.top_l()),
+            sub_points(sr.bot_l(), pr.top_r()),
+            sub_points(sr.top_r(), pr.bot_l()),
+            sub_points(sr.top_l(), pr.bot_r()),
+        key=point_min_abs_component)
 
 
         if abs(intersection_vector[0]) < abs(intersection_vector[1]): # horizontal bounce
