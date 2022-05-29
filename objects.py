@@ -279,12 +279,12 @@ class Powerup(SquareEntity):
         )),
         PowerupType("spin_small",             "./assets/spin_powerup1.png",            weight=30, powerup_effect=BallPowerupEffect(
             lambda ball: (
-                setattr(ball, "spiny", ball.spiny + 1.0*sign(ball.spiny)),
+                setattr(ball, "spiny", ball.spiny + 0.8*sign(ball.spiny)),
             )
         )),
         PowerupType("spin_big",               "./assets/spin_powerup2.png",            weight=8, powerup_effect=BallPowerupEffect(
             lambda ball: (
-                setattr(ball, "spiny", ball.spiny + 2.0*sign(ball.spiny)),
+                setattr(ball, "spiny", ball.spiny + 1.5*sign(ball.spiny)),
             )
         )),
         PowerupType("paddle_extention_small", "./assets/paddle_extension_powerup.png", weight=30, powerup_effect=PaddlePowerupEffect(
