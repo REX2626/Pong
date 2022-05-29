@@ -182,7 +182,7 @@ def handle_ball_movement(ball: Ball, yellow: Padel, red: Padel, powerups: "list[
             effect.ball_effect_func(ball)
         elif isinstance(effect, PaddlePowerupEffect):
             recent_hit_paddle = last_collided if last_collided is not None else random.choice([red, yellow])
-            other_paddle = red if recent_hit_paddle == red else yellow
+            other_paddle = red if recent_hit_paddle == yellow else yellow
             effect.paddle_effect_func(recent_hit_paddle, other_paddle)
 
         powerups.remove(powerup)

@@ -100,10 +100,13 @@ class Padel(SquareEntity):
         self.extra_height_change_rate = 0
 
     def update(self, dt: float, speed: float):
-        if self.extra_height:
-            self.extra_height = max(0, self.extra_height + dt * self.extra_height_change_rate)
+        # bruh rex don't remove this
+        if self.extra_height > 0 and sign(self.extra_height_change_rate) < 0 or\
+        self.extra_height < 0 and sign(self.extra_height_change_rate) > 0:
+            self.extra_height += dt*self.extra_height_change_rate
         else:
             self.extra_height_change_rate = 0
+            self.extra_height = 0
 
     def get_y(self):
         return self.y - self.extra_height/2
@@ -289,8 +292,18 @@ class Powerup(SquareEntity):
         )),
         PowerupType("paddle_extention_small", "./assets/paddle_extension_powerup.png", weight=30, powerup_effect=PaddlePowerupEffect(
             lambda recent_hit_paddle, other_paddle: (
-                setattr(recent_hit_paddle, "extra_height", recent_hit_paddle.extra_height + recent_hit_paddle.height * 0.8),
-                setattr(recent_hit_paddle, "extra_height_change_rate", recent_hit_paddle.extra_height_change_rate*0.5 - recent_hit_paddle.height * 0.8 / 8.0) # the 8 means it takes 8 seconds to revert to normal
+                setattr(recent_hit_paddle, "extra_height", recent_hit_paddle.height * 0.8),
+                setattr(recent_hit_paddle, "extra_height_change_rate", 
+                    - recent_hit_paddle.height * 0.8 / 8.0
+                ) # the 8 means it takes 8 seconds to revert to normal
+            )
+        )),
+        PowerupType("paddle_shrink_small",    "./assets/paddle_shrink_powerup.png",    weight=30, powerup_effect=PaddlePowerupEffect(
+            lambda recent_hit_paddle, other_paddle: (
+                setattr(other_paddle, "extra_height", other_paddle.height * -0.6),
+                setattr(other_paddle, "extra_height_change_rate", 
+                    - other_paddle.height * -0.6 / 6.0
+                ) # the 8 means it takes 8 seconds to revert to normal
             )
         ))
     )
