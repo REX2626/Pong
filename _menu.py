@@ -25,7 +25,8 @@ class Menu():
         self.padel_height_button =  SettingButton(lambda: pong.WIDTH / 4 * 3, lambda: pong.HEIGHT / 6 * 3, lambda: self.chosen_setting(self.padel_height_button) , lambda: f"PADEL HEIGHT: {pong.PADEL_HEIGHT}", pong.WHITE, self.box_colour, "comicsans", 40)
         self.fullscreen_button =    SettingButton(lambda: pong.WIDTH / 4    , lambda: pong.HEIGHT / 6 * 4, self.change_fullscreen                                , lambda: f"FULL SCREEN: {pong.FULLSCREEN}"   , pong.WHITE, self.box_colour, "comicsans", 40)
         self.size_link_button =     SettingButton(lambda: pong.WIDTH / 4 * 3, lambda: pong.HEIGHT / 6 * 4, self.change_size_link                                 , lambda: f"SIZE LINK: {pong.SIZE_LINK}"      , pong.WHITE, self.box_colour, "comicsans", 40)
-
+        self.num_powerups_button =  SettingButton(lambda: pong.WIDTH / 4    , lambda: pong.HEIGHT / 20   , lambda: self.chosen_setting(self.num_powerups_button)     , lambda: f"NUM POWERUPS: {pong.NUM_POWERUPS}", pong.WHITE, self.box_colour, "comicsans", 10)
+        
         self.settings_dict = {
             self.screen_width_button:  self.change_screen_width,
             self.screen_height_button: self.change_screen_height,
@@ -34,7 +35,8 @@ class Menu():
             self.padel_width_button:   self.change_padel_width,
             self.padel_height_button:  self.change_padel_height,
             self.fullscreen_button:    self.change_fullscreen,
-            self.size_link_button:     self.change_size_link
+            self.size_link_button:     self.change_size_link,
+            self.num_powerups_button:  self.change_num_powerups
         }
 
         for button in self.settings_dict:
@@ -65,7 +67,7 @@ class Menu():
         self.back_to_menu_button = Button(lambda: pong.WIDTH / 2, lambda: pong.HEIGHT / 2, lambda: self.main_menu(), "MAIN MENU", pong.WHITE, self.box_colour, "comicsans", 40)
 
         self.text_widgets = [self.title_text]
-        self.buttons = [self.singleplayer_button, self.multiplayer_button, self.settings_button, self.info_button, self.quit_button]
+        self.buttons = [self.singleplayer_button, self.multiplayer_button, self.settings_button, self.info_button, self.quit_button, self.num_powerups_button]
         self.all_widgets: list[Widget, Button, SettingButton] = self.text_widgets + self.info_widgets + self.buttons + [*self.settings_dict.keys()] + [self.back_to_menu_button]
 
     def mouse_click(self, mouse):
@@ -213,6 +215,9 @@ class Menu():
 
     def change_padel_height(self, change):
         pong.PADEL_HEIGHT = max(0, min(pong.HEIGHT - pong.TEXT_BAR_HEIGHT - 2 * pong.PADEL_INDENT, pong.PADEL_HEIGHT + change))
+
+    def change_num_powerups(self, change):
+        pong.NUM_POWERUPS = max(0, pong.NUM_POWERUPS + change)
 
     def change_fullscreen(self, _=None):
         if pong.FULLSCREEN:

@@ -37,6 +37,8 @@ POWERUP_MAX_Y_RATIO = 1 - POWERUP_MIN_Y_RATIO
 
 BALL_WIDTH, BALL_HEIGHT = 8, 8
 
+NUM_POWERUPS = 5
+
 def update_screen_size():
     global RED_PADEL_X, YELLOW_PADEL_X, PADEL_Y, DASHED_WIDTH, DASHED_X, DASHED_LENGTH, SCORE_FONT, TEXT_BAR_HEIGHT, BALL_WIDTH, BALL_HEIGHT, PADEL_WIDTH, PADEL_HEIGHT, SPEED, variable_speed
     SCORE_FONT = pygame.font.SysFont("comicsans", round(WIDTH / 45))
@@ -233,7 +235,7 @@ def main(red_handle_movement, menu: "_menu.Menu"):
     ball = Ball(WIDTH, HEIGHT, BALL_WIDTH, BALL_HEIGHT, TEXT_BAR_HEIGHT)
 
     powerups: "list[Powerup]" = []
-    for _ in range(5):
+    for _ in range(NUM_POWERUPS):
         powerups.append(Powerup.create_random(
             screen_width=WIDTH,
             min_x=WIDTH * POWERUP_MIN_X_RATIO,

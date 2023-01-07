@@ -266,7 +266,7 @@ class Powerup(SquareEntity):
                 setattr(ball, "spiny", ball.spiny*1.4)
             )
         )),
-        PowerupType("speed_big",              "./assets/speed_powerup2.png",           weight=9,  powerup_effect=BallPowerupEffect(
+        PowerupType("speed_big",              "./assets/speed_powerup2.png",           weight=14,  powerup_effect=BallPowerupEffect(
             lambda ball: (
                 setattr(ball, "vx", ball.vx*2),
                 setattr(ball, "vy", ball.vy*2),
@@ -285,7 +285,7 @@ class Powerup(SquareEntity):
                 setattr(ball, "spiny", ball.spiny + 0.8*sign(ball.spiny)),
             )
         )),
-        PowerupType("spin_big",               "./assets/spin_powerup2.png",            weight=8, powerup_effect=BallPowerupEffect(
+        PowerupType("spin_big",               "./assets/spin_powerup2.png",            weight=13, powerup_effect=BallPowerupEffect(
             lambda ball: (
                 setattr(ball, "spiny", ball.spiny + 1.5*sign(ball.spiny)),
             )
